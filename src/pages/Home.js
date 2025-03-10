@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 export default function Home() {
   return (
     <div style={{ textAlign: 'center', padding: '20px' }}>
-      <h1>Welcome to My Game</h1>
+      <h1>Welcome to The Lost Galaxy</h1>
       <p>Click the button below to start the game!</p>
       <Link 
         to="/game" 
