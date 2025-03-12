@@ -1,3 +1,21 @@
+:root {
+  --mousex-delta: 0;
+  --mousey-delta: 0;
+  --scroll-delta: 0;
+}
+
+.dynamic-transform {
+  transform: translate(calc(0% + 8%* var(--mousex-delta)), calc(0% + 8%* var(--mousey-delta) - 14%* var(--scroll-delta)));
+  transition: transform 0.1s ease-out; /* Optional: smoother transition */
+  
+}
+
+.dynamic-transform-absolute {
+  position: absolute;
+  transform: translate(calc(0% + 6% * var(--mousex-delta))) 
+             translateY(calc(0% - 25% * var(--scroll-delta) + 1% * var(--mousey-delta)));
+  transition: transform 0.1s ease-out; /* Optional: smoother transition */
+}
 .App {
   text-align: center;
 }
