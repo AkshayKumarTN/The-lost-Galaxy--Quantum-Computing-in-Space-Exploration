@@ -111,7 +111,7 @@ export default function Home() {
                 Unlike traditional computers that use bits (0s and 1s), quantum computers use qubits, which can represent multiple states at once.<br />
                 This allows them to solve complex problems much faster than classical computers, revolutionizing fields like cryptography, medicine, and artificial intelligence.</div>
               <div style={{ marginTop: '2em', display: 'flex', alignItems: 'center', gap: '1em' }}>
-                <Link to="/game" style={{
+                <Link to="/tutorial" style={{
                   padding: '.5em 1em',
                   color: '#8bb2ff',
                   textAlign: 'center',
