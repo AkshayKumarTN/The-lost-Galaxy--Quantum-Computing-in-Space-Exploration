@@ -4,18 +4,25 @@
   --scroll-delta: 0;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
+
 .dynamic-transform {
   transform: translate(calc(0% + 8%* var(--mousex-delta)), calc(0% + 8%* var(--mousey-delta) - 14%* var(--scroll-delta)));
-  transition: transform 0.1s ease-out; /* Optional: smoother transition */
-  
+  transition: transform 0.1s ease-out;
+  /* Optional: smoother transition */
+
 }
 
 .dynamic-transform-absolute {
   position: absolute;
-  transform: translate(calc(0% + 6% * var(--mousex-delta))) 
-             translateY(calc(0% - 25% * var(--scroll-delta) + 1% * var(--mousey-delta)));
-  transition: transform 0.1s ease-out; /* Optional: smoother transition */
+  transform: translate(calc(0% + 6% * var(--mousex-delta))) translateY(calc(0% - 25% * var(--scroll-delta) + 1% * var(--mousey-delta)));
+  transition: transform 0.1s ease-out;
+  /* Optional: smoother transition */
 }
+
 .App {
   text-align: center;
 }
@@ -46,10 +53,41 @@
   color: #61dafb;
 }
 
+.home-main {
+  padding: 10px 20px;
+  background: black;
+  min-height: 100vh;
+
+  
+  .home-header {
+    background: black;
+    padding: 10px 40px 0px 0px;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    width: -webkit-fill-available;
+
+    /* background-color: rgba(16, 16, 16, .9);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px); */
+
+  }
+
+  .home-body {
+    display: flex;
+    flex-flow: column;
+    padding: 100px 20px 20px 20px;
+    color: rgb(255, 255, 255);
+    margin-top: 40px;
+    background-image: url('../public/assets/Background/star-bg.webp');
+  }
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
