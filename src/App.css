@@ -54,14 +54,13 @@
 }
 
 .home-main {
-  padding: 10px 20px;
   background: black;
   min-height: 100vh;
 
-  
+
   .home-header {
     background: black;
-    padding: 10px 40px 0px 0px;
+    padding: 10px 60px 0px 20px;
     position: fixed;
     top: 0;
     z-index: 1000;
@@ -76,11 +75,68 @@
   .home-body {
     display: flex;
     flex-flow: column;
-    padding: 100px 20px 20px 20px;
+    padding: 100px 40px 20px 40px;
     color: rgb(255, 255, 255);
     margin-top: 40px;
     background-image: url('../public/assets/Background/star-bg.webp');
+
   }
+
+  .setCourse {
+    font-family: "Shentox", "Rogan", sans-serif;
+    color: rgb(255, 255, 255);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+    padding: 9vw 0 20vw;
+    background-image: url('../public/assets/Background/space-craft.webp') !important;
+    height: 400px;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center top;
+    animation-name: fadeIn;
+    animation-duration: 2s;
+    animation-iteration-count: 1;
+
+  }
+
+  .home-footer {
+    color: #FFF;
+    padding: 20px;
+    font-size: 44px;
+
+    .name {
+      display: flex;
+      gap: 10px;
+      font-size: 24px;
+      padding: 10px;
+
+      .linkdin-ico {
+        background-color: #000;
+        cursor: pointer;
+
+        path {
+          fill: #FFF;
+        }
+
+        transition: .2s ease-in-out;
+      }
+
+      .linkdin-ico:hover {
+        background-color: #FFF;
+        height: 25px;
+        width: 25px;
+        border-radius: 35%;
+
+        path {
+          fill: #0A66C2;
+        }
+      }
+    }
+  }
+
 }
 
 @keyframes App-logo-spin {
