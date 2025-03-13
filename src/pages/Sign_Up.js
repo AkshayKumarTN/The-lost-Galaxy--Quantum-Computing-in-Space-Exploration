@@ -44,7 +44,7 @@ const Sign_Up = () => {
     setError("");
 
     try {
-      const response = await axios.post('http://localhost:27017/api/login', { email, password });
+      const response = await axios.post('http://localhost:3000/api/signup', { email, password });
       const token = response.data.token;
       // Save the token (typically in localStorage or context)
       localStorage.setItem('token', token);
