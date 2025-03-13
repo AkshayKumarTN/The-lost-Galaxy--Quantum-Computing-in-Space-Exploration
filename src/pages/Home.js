@@ -31,7 +31,14 @@ export default function Home() {
       <div className="home-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <img src="/assets/images/The-Lost-Galaxy-Home-icon.png" alt="The Lost Galaxy" height="100" />
         <div style={{ display: 'flex', alignItems: 'center', gap: '1em', fontSize: '20px' }}>
-          <a style={{ color: '#8bb2ff', textAlign: 'center', fontWeight: '400', textDecoration: 'none' }}>Log in</a>
+          <Link to="/Login_In" style={{
+            padding: '.5em 1em',
+            color: '#8bb2ff',
+            textAlign: 'center',
+            fontWeight: '400',
+            padding: '10px',
+            textDecoration: 'none'
+          }}>Log in</Link>
           <a style={{ color: '#8bb2ff', textAlign: 'center', fontWeight: '400', border: '1px solid', borderColor: '#8bb2ff', padding: '10px', textDecoration: 'none' }}>Sign up</a>
         </div>
       </div>
@@ -97,44 +104,15 @@ export default function Home() {
               The Lost Galaxy offers an unforgettable adventure among the stars. <br /> <br />
               Are you ready to uncover the secrets of the cosmos? Your journey begins now.</div>
           </div>
-
-
         </div>
-        <div style={{ margin: '10em 10em 0em 10em' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10em' }}>
-            <div className="dynamic-transform" style={{ left: '0' }}>
-              <img src="/assets/images/home-cta-rocket.png" alt="rocket" width="288" />
-            </div>
-            <div>
-              <h1>What is Quantum Computing?</h1>
-              <div>Quantum Computing is a cutting-edge technology that uses the principles of quantum physics to process information. <br />
-                Unlike traditional computers that use bits (0s and 1s), quantum computers use qubits, which can represent multiple states at once.<br />
-                This allows them to solve complex problems much faster than classical computers, revolutionizing fields like cryptography, medicine, and artificial intelligence.</div>
-              <div style={{ marginTop: '2em', display: 'flex', alignItems: 'center', gap: '1em' }}>
-                <Link to="/tutorial" style={{
-                  padding: '.5em 1em',
-                  color: '#8bb2ff',
-                  textAlign: 'center',
-                  fontSize: '1.25em',
-                  fontWeight: '600',
-                  border: '1px solid',
-                  borderColor: '#8bb2ff',
-                  textDecoration: 'none'
-                }}>
-                  Learn More
-                </Link>
-                {/* <div><img src="/assets/images/SP-Studio.png" alt="UFO" height="300" /></div> */}
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         <div style={{ margin: '10em 10em 0em 10em' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15em' }}>
-          <div style={{ left: '0', position:'absolute' }}>
+            <div style={{ left: '0', position: 'absolute' }}>
               <img src="/assets/images/nebula.webp" alt="rocket" width="588" />
             </div>
-            <div style={{marginLeft:'15em', zIndex:'1'}}>
+            <div style={{ marginLeft: '15em', zIndex: '1' }}>
               <h1>What is Space Exploration?</h1>
               <div>Space Exploration is the investigation and discovery of outer space using astronomy, spacecraft, and advanced technology. <br />
                 It involves studying planets, stars, and galaxies, as well as sending robots and astronauts beyond Earth to explore the universe. <br />
@@ -158,12 +136,41 @@ export default function Home() {
                 {/* <div><img src="/assets/images/SP-Studio.png" alt="UFO" height="300" /></div> */}
               </div>
             </div>
-            
+
           </div>
         </div>
 
 
-        <div style={{ margin: '10em 10em 0em 10em' }}>
+        <div style={{ margin: '10em 10em 2em 10em' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10em' }}>
+            <div>
+              <h1>What is Quantum Computing?</h1>
+              <div>Quantum Computing is a cutting-edge technology that uses the principles of quantum physics to process information. <br />
+                Unlike traditional computers that use bits (0s and 1s), quantum computers use qubits, which can represent multiple states at once.<br />
+                This allows them to solve complex problems much faster than classical computers, revolutionizing fields like cryptography, medicine, and artificial intelligence.</div>
+              <div style={{ marginTop: '2em', display: 'flex', alignItems: 'center', gap: '1em' }}>
+                <Link to="/tutorial" style={{
+                  padding: '.5em 1em',
+                  color: '#8bb2ff',
+                  textAlign: 'center',
+                  fontSize: '1.25em',
+                  fontWeight: '600',
+                  border: '1px solid',
+                  borderColor: '#8bb2ff',
+                  textDecoration: 'none'
+                }}>
+                  Learn More
+                </Link>
+              </div>
+            </div>
+            <div style={{ right: '0' }}>
+              <img src="/assets/images/qc-icon.png" alt="rocket" width="488" />
+            </div>
+          </div>
+        </div>
+
+
+        {/* <div style={{ margin: '10em 10em 0em 10em' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10em' }}>
             <div className="dynamic-transform" style={{ left: '0' }}>
               <img src="/assets/images/home-cta-rocket.png" alt="rocket" width="288" />
@@ -186,14 +193,89 @@ export default function Home() {
                 }}>
                   Learn More
                 </Link>
-                {/* <div><img src="/assets/images/SP-Studio.png" alt="UFO" height="300" /></div> */}
               </div>
             </div>
           </div>
-        </div>
-
+        </div> 
+        */}
 
       </div>
+
+      <div className="setCourse">
+        <div style={{ fontSize: '72px', fontWeight: '500' }}>SET COURSE</div>
+        <div style={{ fontSize: '36px', fontWeight: '300' }}>FOR TOUR SPACE ADVENTURE</div>
+        <div style={{ marginTop: '2em', display: 'flex', alignItems: 'center', gap: '1em' }}>
+          <Link to="/game" style={{
+            padding: '.5em 1em',
+            color: '#000',
+            textAlign: 'center',
+            fontSize: '1.25em',
+            fontWeight: '600',
+            border: '1px solid',
+            borderColor: '#8bb2ff',
+            textDecoration: 'none',
+            background: '#FFF',
+          }}>
+            PLAY NOW
+          </Link>
+        </div>
+      </div>
+      <div className='home-footer'>
+        <div>
+          <div>Follow Us</div>
+          <div style={{fontSize:'24px', padding:'20px 0px 0px 0px'}}>Developers</div>
+          <div style={{display:'flex', gap:'2em', padding:'20px 0px'}}>
+            <div className='name'>Akshay
+              <div className='linkdin-ico' onClick={() => window.open('https://www.linkedin.com/in/akshay-kumar-t-n-093b71232/', '_blank')}>
+                <svg xmlns="http://www.w3.org/2000/svg" height="27" width="27" viewBox="0 0 27 27" focusable="false" class="lazy-loaded" aria-busy="false" >
+                  <g fill="currentColor" >
+                    <path d="M1.91 0h22.363a1.91 1.91 0 011.909 1.91v22.363a1.91 1.91 0 01-1.91 1.909H1.91A1.91 1.91 0 010 24.272V1.91A1.91 1.91 0 011.91 0zm1.908 22.364h3.818V9.818H3.818zM8.182 5.727a2.455 2.455 0 10-4.91 0 2.455 2.455 0 004.91 0zm2.182 4.091v12.546h3.818v-6.077c0-2.037.75-3.332 2.553-3.332 1.3 0 1.81 1.201 1.81 3.332v6.077h3.819v-6.93c0-3.74-.895-5.78-4.667-5.78-1.967 0-3.277.921-3.788 1.946V9.818z" fill="currentColor" fill-rule="evenodd"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div className='name'>Carlos
+              <div className='linkdin-ico' onClick={() => window.open('https://www.linkedin.com/in/carlos-valdez/', '_blank')}>
+                <svg xmlns="http://www.w3.org/2000/svg" height="27" width="27" viewBox="0 0 27 27" focusable="false" class="lazy-loaded" aria-busy="false" >
+                  <g fill="currentColor" >
+                    <path d="M1.91 0h22.363a1.91 1.91 0 011.909 1.91v22.363a1.91 1.91 0 01-1.91 1.909H1.91A1.91 1.91 0 010 24.272V1.91A1.91 1.91 0 011.91 0zm1.908 22.364h3.818V9.818H3.818zM8.182 5.727a2.455 2.455 0 10-4.91 0 2.455 2.455 0 004.91 0zm2.182 4.091v12.546h3.818v-6.077c0-2.037.75-3.332 2.553-3.332 1.3 0 1.81 1.201 1.81 3.332v6.077h3.819v-6.93c0-3.74-.895-5.78-4.667-5.78-1.967 0-3.277.921-3.788 1.946V9.818z" fill="currentColor" fill-rule="evenodd"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div className='name'>James
+              <div className='linkdin-ico' onClick={() => window.open('', '_blank')}>
+                <svg xmlns="http://www.w3.org/2000/svg" height="27" width="27" viewBox="0 0 27 27" focusable="false" class="lazy-loaded" aria-busy="false" >
+                  <g fill="currentColor" >
+                    <path d="M1.91 0h22.363a1.91 1.91 0 011.909 1.91v22.363a1.91 1.91 0 01-1.91 1.909H1.91A1.91 1.91 0 010 24.272V1.91A1.91 1.91 0 011.91 0zm1.908 22.364h3.818V9.818H3.818zM8.182 5.727a2.455 2.455 0 10-4.91 0 2.455 2.455 0 004.91 0zm2.182 4.091v12.546h3.818v-6.077c0-2.037.75-3.332 2.553-3.332 1.3 0 1.81 1.201 1.81 3.332v6.077h3.819v-6.93c0-3.74-.895-5.78-4.667-5.78-1.967 0-3.277.921-3.788 1.946V9.818z" fill="currentColor" fill-rule="evenodd"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div className='name'>Zaafira
+              <div className='linkdin-ico' onClick={() => window.open('https://www.linkedin.com/in/zaafira-hasan-153260140/', '_blank')}>
+                <svg xmlns="http://www.w3.org/2000/svg" height="27" width="27" viewBox="0 0 27 27" focusable="false" class="lazy-loaded" aria-busy="false" >
+                  <g fill="currentColor" >
+                    <path d="M1.91 0h22.363a1.91 1.91 0 011.909 1.91v22.363a1.91 1.91 0 01-1.91 1.909H1.91A1.91 1.91 0 010 24.272V1.91A1.91 1.91 0 011.91 0zm1.908 22.364h3.818V9.818H3.818zM8.182 5.727a2.455 2.455 0 10-4.91 0 2.455 2.455 0 004.91 0zm2.182 4.091v12.546h3.818v-6.077c0-2.037.75-3.332 2.553-3.332 1.3 0 1.81 1.201 1.81 3.332v6.077h3.819v-6.93c0-3.74-.895-5.78-4.667-5.78-1.967 0-3.277.921-3.788 1.946V9.818z" fill="currentColor" fill-rule="evenodd"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div className='name'>Zeel
+              <div className='linkdin-ico' onClick={() => window.open('https://www.linkedin.com/in/zeel-desai-8a0143296/', '_blank')}>
+                <svg xmlns="http://www.w3.org/2000/svg" height="27" width="27" viewBox="0 0 27 27" focusable="false" class="lazy-loaded" aria-busy="false" >
+                  <g fill="currentColor" >
+                    <path d="M1.91 0h22.363a1.91 1.91 0 011.909 1.91v22.363a1.91 1.91 0 01-1.91 1.909H1.91A1.91 1.91 0 010 24.272V1.91A1.91 1.91 0 011.91 0zm1.908 22.364h3.818V9.818H3.818zM8.182 5.727a2.455 2.455 0 10-4.91 0 2.455 2.455 0 004.91 0zm2.182 4.091v12.546h3.818v-6.077c0-2.037.75-3.332 2.553-3.332 1.3 0 1.81 1.201 1.81 3.332v6.077h3.819v-6.93c0-3.74-.895-5.78-4.667-5.78-1.967 0-3.277.921-3.788 1.946V9.818z" fill="currentColor" fill-rule="evenodd"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div style={{fontSize:'18px'}}> Copyright © CCP 1997-2025</div>
+      </div>
+
     </div>
   );
 }
