@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { HashLink } from 'react-router-hash-link';
 import '../App.css'; // Import the CSS
 
 export default function Home() {
@@ -39,7 +40,7 @@ export default function Home() {
             padding: '10px',
             textDecoration: 'none'
           }}>Log in</Link>
-          <a style={{ color: '#8bb2ff', textAlign: 'center', fontWeight: '400', border: '1px solid', borderColor: '#8bb2ff', padding: '10px', textDecoration: 'none' }}>Sign up</a>
+          <Link to="/Sign_Up" style={{ color: '#8bb2ff', textAlign: 'center', fontWeight: '400', border: '1px solid', borderColor: '#8bb2ff', padding: '10px', textDecoration: 'none' }}>Sign up</Link>
         </div>
       </div>
 
@@ -72,7 +73,7 @@ export default function Home() {
             }}>
               Start Game
             </Link>
-            <Link to="/game" style={{
+            <HashLink  to="#learnMore" smooth style={{
               padding: '.5em 1em',
               color: '#8bb2ff',
               textAlign: 'center',
@@ -83,7 +84,7 @@ export default function Home() {
               textDecoration: 'none'
             }}>
               Learn More
-            </Link>
+            </HashLink >
             {/* <div><img src="/assets/images/SP-Studio.png" alt="UFO" height="300" /></div> */}
           </div>
         </div>
@@ -93,7 +94,7 @@ export default function Home() {
             <img src="/assets/images/home-cta-planet.png" alt="planet" height="400" />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
-            <div>The Lost Galaxy is an epic space adventure game that takes you on a journey through uncharted galaxies,  <br />
+            <div id="learnMore">The Lost Galaxy is an epic space adventure game that takes you on a journey through uncharted galaxies,  <br />
               ancient alien civilizations, and thrilling interstellar battles. As a fearless explorer, you'll navigate mysterious <br />
               worlds,uncover hidden secrets, and battle cosmic threats to save the galaxy from impending doom. <br /> <br />
               But there's more—your greatest weapon isn't just your starship, but your mastery of quantum computing.<br />
@@ -121,7 +122,7 @@ export default function Home() {
 
               </div>
               <div style={{ marginTop: '2em', display: 'flex', alignItems: 'center', gap: '1em' }}>
-                <Link to="/game" style={{
+                <Link to="/tutorial" style={{
                   padding: '.5em 1em',
                   color: '#8bb2ff',
                   textAlign: 'center',
@@ -244,7 +245,7 @@ export default function Home() {
               </div>
             </div>
             <div className='name'>James
-              <div className='linkdin-ico' onClick={() => window.open('', '_blank')}>
+              <div className='linkdin-ico' onClick={() => window.open('https://www.linkedin.com/in/wuchuyuan/', '_blank')}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="27" width="27" viewBox="0 0 27 27" focusable="false" class="lazy-loaded" aria-busy="false" >
                   <g fill="currentColor" >
                     <path d="M1.91 0h22.363a1.91 1.91 0 011.909 1.91v22.363a1.91 1.91 0 01-1.91 1.909H1.91A1.91 1.91 0 010 24.272V1.91A1.91 1.91 0 011.91 0zm1.908 22.364h3.818V9.818H3.818zM8.182 5.727a2.455 2.455 0 10-4.91 0 2.455 2.455 0 004.91 0zm2.182 4.091v12.546h3.818v-6.077c0-2.037.75-3.332 2.553-3.332 1.3 0 1.81 1.201 1.81 3.332v6.077h3.819v-6.93c0-3.74-.895-5.78-4.667-5.78-1.967 0-3.277.921-3.788 1.946V9.818z" fill="currentColor" fill-rule="evenodd"></path>
