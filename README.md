@@ -3,7 +3,7 @@
 The Lost Galaxy is an interactive quantum computing game where players embark on a thrilling space adventure, solving quantum puzzles to restore balance to a galaxy disrupted by quantum anomalies. Players pilot a quantum-powered spaceship, navigate cosmic challenges, and apply principles of quantum computing to progress.
 
 
-# Getting Started with Create React App
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
