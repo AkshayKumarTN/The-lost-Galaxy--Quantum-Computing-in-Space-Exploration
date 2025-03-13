@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../App.css"; // Import your CSS
+import axios from 'axios';
+
+
+let user = undefined;
 
 const Sign_Up = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -29,15 +35,31 @@ const Sign_Up = () => {
     };
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)) {
       setError("Password must be at least 8 characters long, include letters, numbers, and a special character.");
       return;
     }
     setError("");
+
+    try {
+      const response = await axios.post('http://localhost:27017/api/login', { email, password });
+      const token = response.data.token;
+      // Save the token (typically in localStorage or context)
+      localStorage.setItem('token', token);
+      alert('Login successful');
+    } catch (error) {
+      setError(error.response.data.message);
+    }
+    
+    
     alert("Signed up successfully!");
   };
+
+
+  
+
 
   return (
     <div style={{ padding: "10px 20px", background: "black", minHeight: "100vh" }}>

@@ -1,0 +1,19 @@
+{
+  "name": "quantumspace_users",
+  "version": "1.0.0",
+  "description": "My users module",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Zaafira Hasan 10474655",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongodb": "^6.13.1"
+  },
+  "keywords": []
+}
