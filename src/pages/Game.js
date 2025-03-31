@@ -7,42 +7,78 @@ class MainScene extends Phaser.Scene {
   }
 
   preload() {
-    // Load assets here
-    this.load.image('logo', 'assets/images/phaser-logo.png');
+    this.load.image('startScreen', '/assets/images/start-screen.png');
   }
 
   create() {
-    // Add logo
-    const logo = this.add.image(400, 300, 'logo');
-    logo.setScale(0.5);
+    const { width, height } = this.scale;
 
-    // Add text
-    this.add.text(400, 500, 'Press Space to Continue', { 
-      fontSize: '24px',
+    // Add the background image and center it
+    const background = this.add.image(width / 2, height / 2, 'startScreen');
+    background.setOrigin(0.5, 0.5);
+
+    // Ensure the entire image fits inside the screen while maintaining aspect ratio
+    const scaleX = width / background.width;
+    const scaleY = height / background.height;
+    const scale = Math.min(scaleX, scaleY); // Use the smaller scale to fit completely
+    background.setScale(scale);
+
+    // Add "Tap to Start" text at the bottom
+    const startText = this.add.text(width / 2, height * 0.85, 'Tap to Start', {
+      fontSize: '32px',
       fill: '#ffffff',
-      fontFamily: 'Arial'
+      fontFamily: 'Arial',
     }).setOrigin(0.5);
 
-    // Add keyboard input
-    this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this.tweens.add({
+      targets: startText,
+      alpha: { from: 1, to: 0.3 },
+      duration: 1000,
+      yoyo: true,
+      repeat: -1
+    });
+
+    // Pointer input for scene transition
+    this.input.on('pointerdown', () => {
+      this.scene.start('GameScene');
+    });
+
+    // Handle resizing
+    this.scale.on('resize', this.resizeGame, this);
   }
 
-  update() {
-    if (this.spaceKey.isDown) {
-      this.scene.start('MainScene');
+  resizeGame(gameSize) {
+    const { width, height } = gameSize;
+    this.cameras.main.setSize(width, height);
+
+    const background = this.children.getByName('background');
+    if (background) {
+      background.setPosition(width / 2, height / 2);
+      const scaleX = width / background.width;
+      const scaleY = height / background.height;
+      background.setScale(Math.min(scaleX, scaleY)); // Fit without cropping
+    }
+
+    const startText = this.children.getByName('startText');
+    if (startText) {
+      startText.setPosition(width / 2, height * 0.85);
     }
   }
 }
 
 const config = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  width: window.innerWidth,
+  height: window.innerHeight,
   parent: 'game-container',
   scene: [MainScene],
   physics: {
     default: 'arcade',
     arcade: { gravity: { y: 0 } }
+  },
+  scale: {
+    mode: Phaser.Scale.FIT, // Ensure the entire image fits inside the screen
+    autoCenter: Phaser.Scale.CENTER_BOTH
   }
 };
 

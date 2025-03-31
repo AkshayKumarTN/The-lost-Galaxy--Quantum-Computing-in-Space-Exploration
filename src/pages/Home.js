@@ -204,7 +204,7 @@ export default function Home() {
 
       <div className="setCourse">
         <div style={{ fontSize: '72px', fontWeight: '500' }}>SET COURSE</div>
-        <div style={{ fontSize: '36px', fontWeight: '300' }}>FOR TOUR SPACE ADVENTURE</div>
+        <div style={{ fontSize: '36px', fontWeight: '300' }}>FOR YOUR SPACE ADVENTURE</div>
         <div style={{ marginTop: '2em', display: 'flex', alignItems: 'center', gap: '1em' }}>
           <Link to="/game" style={{
             padding: '.5em 1em',
