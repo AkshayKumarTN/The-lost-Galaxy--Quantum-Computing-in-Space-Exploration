@@ -1,0 +1,41 @@
+/* Leaderboard.css */
+
+/* 設置排行榜容器的背景顏色和內邊距 */
+.leaderboard-container {
+    background-color: #f4f4f9; /* 淺灰色背景 */
+    color: #333; /* 深灰色文字 */
+    padding: 30px;
+    border-radius: 10px; /* 圓角效果 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 輕微陰影 */
+    max-width: 600px;
+    margin: 0 auto; /* 水平居中 */
+  }
+  
+  /* 設置標題的樣式 */
+  .leaderboard-container h1 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* 設置排行榜項目的樣式 */
+  .leaderboard-container ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .leaderboard-container li {
+    font-size: 1.2rem;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .leaderboard-container li:last-child {
+    border-bottom: none;
+  }
+  
+  /* 當滑鼠懸停在列表項目時，改變背景顏色 */
+  .leaderboard-container li:hover {
+    background-color: #e0e0e0;
+  }
+  

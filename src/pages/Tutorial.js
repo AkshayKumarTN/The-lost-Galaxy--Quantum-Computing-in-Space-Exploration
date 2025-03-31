@@ -1,4 +1,3 @@
-// Scrum-1 tutorial for Quantum
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Tutorial.css';
@@ -56,6 +55,60 @@ const slides = [
         </ul>
         <p>Challenges: Decoherence, error correction, and scalability.</p>
         <p>Future outlook: Advancements in quantum hardware by Google, IBM, etc.</p>
+      </>
+    )
+  },
+  {
+    title: "Introduction to Space Exploration",
+    content: (
+      <>
+        <p>Space exploration is the ongoing discovery and exploration of celestial structures in outer space.</p>
+        <p>Key milestones include:</p>
+        <ul>
+          <li><strong>1957:</strong> Launch of Sputnik 1, the first artificial satellite.</li>
+          <li><strong>1969:</strong> Apollo 11 lands the first humans on the Moon.</li>
+          <li><strong>1998:</strong> Launch of the International Space Station (ISS).</li>
+        </ul>
+      </>
+    )
+  },
+  {
+    title: "Spacecraft and Rockets",
+    content: (
+      <>
+        <p>Space travel relies on advanced spacecraft and rocket technology.</p>
+        <ul>
+          <li><strong>Satellites:</strong> Used for communication, navigation, and Earth observation.</li>
+          <li><strong>Space Probes:</strong> Unmanned spacecraft sent to explore distant planets.</li>
+          <li><strong>Reusable Rockets:</strong> Innovations by companies like SpaceX reduce costs.</li>
+        </ul>
+      </>
+    )
+  },
+  {
+    title: "Human Space Missions and Colonization",
+    content: (
+      <>
+        <p>Human space exploration is focused on long-term missions and colonization.</p>
+        <ul>
+          <li><strong>ISS:</strong> A collaborative space station for research.</li>
+          <li><strong>Moon Missions:</strong> NASA’s Artemis program aims to return humans to the Moon.</li>
+          <li><strong>Mars Colonization:</strong> SpaceX and NASA plan to send humans to Mars in the future.</li>
+        </ul>
+      </>
+    )
+  },
+  {
+    title: "The Future of Space Exploration",
+    content: (
+      <>
+        <p>Future advancements in space exploration focus on deep space travel and new technologies.</p>
+        <ul>
+          <li><strong>Interstellar Travel:</strong> Concepts like warp drives and antimatter propulsion.</li>
+          <li><strong>Space Mining:</strong> Extracting resources from asteroids.</li>
+          <li><strong>Exoplanet Exploration:</strong> Searching for habitable planets.</li>
+        </ul>
+        <p>International cooperation and private sector involvement are key drivers of progress.</p>
       </>
     )
   }
