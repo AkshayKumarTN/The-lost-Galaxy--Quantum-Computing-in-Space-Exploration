@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import Phaser from 'phaser';
+import Level1Superposition from './Level1-superposition.js';
 
 class MainScene extends Phaser.Scene {
   constructor() {
@@ -7,21 +8,19 @@ class MainScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('startScreen', '/assets/images/start-screen.png');
+    this.load.image('startScreen', 'assets/images/start-screen.png');
   }
 
   create() {
     const { width, height } = this.scale;
 
     // Add the background image and center it
-    const background = this.add.image(width / 2, height / 2, 'startScreen');
-    background.setOrigin(0.5, 0.5);
+    const background = this.add.image(width / 2, height / 2, 'startScreen').setOrigin(0.5);
 
-    // Ensure the entire image fits inside the screen while maintaining aspect ratio
+    // Scale the image to fit the screen while maintaining aspect ratio
     const scaleX = width / background.width;
     const scaleY = height / background.height;
-    const scale = Math.min(scaleX, scaleY); // Use the smaller scale to fit completely
-    background.setScale(scale);
+    background.setScale(Math.min(scaleX, scaleY));
 
     // Add "Tap to Start" text at the bottom
     const startText = this.add.text(width / 2, height * 0.85, 'Tap to Start', {
@@ -30,6 +29,7 @@ class MainScene extends Phaser.Scene {
       fontFamily: 'Arial',
     }).setOrigin(0.5);
 
+    // Blinking effect
     this.tweens.add({
       targets: startText,
       alpha: { from: 1, to: 0.3 },
@@ -38,31 +38,60 @@ class MainScene extends Phaser.Scene {
       repeat: -1
     });
 
-    // Pointer input for scene transition
+    // Click to transition to IntroScene
     this.input.on('pointerdown', () => {
-      this.scene.start('GameScene');
+      this.scene.start('IntroScene');
     });
 
-    // Handle resizing
     this.scale.on('resize', this.resizeGame, this);
   }
 
   resizeGame(gameSize) {
-    const { width, height } = gameSize;
-    this.cameras.main.setSize(width, height);
-
-    const background = this.children.getByName('background');
-    if (background) {
-      background.setPosition(width / 2, height / 2);
-      const scaleX = width / background.width;
-      const scaleY = height / background.height;
-      background.setScale(Math.min(scaleX, scaleY)); // Fit without cropping
+    if (this.cameras && this.cameras.main) {
+      this.cameras.main.setSize(gameSize.width, gameSize.height);
     }
+  }
+}
 
-    const startText = this.children.getByName('startText');
-    if (startText) {
-      startText.setPosition(width / 2, height * 0.85);
-    }
+// Intro Scene with Animated Dialogue
+class IntroScene extends Phaser.Scene {
+  constructor() {
+    super({ key: 'IntroScene' });
+  }
+
+  preload() {
+    this.load.image('astronaut', 'assets/images/astronaut.png');
+  }
+
+  create() {
+    const { width, height } = this.scale;
+    this.add.image(width / 2, height / 2, 'astronaut').setOrigin(0.5);
+
+    const dialogue = [
+      "Captain, we've received a distress signal...",
+      "A lost ship is somewhere in this galaxy, trapped in quantum superposition!",
+      "We must use our quantum scanners to determine its true location.",
+      "Be careful—choosing the wrong position could trigger a paradox!",
+      "Let's begin our mission!"
+    ];
+
+    let dialogueIndex = 0;
+    const dialogueText = this.add.text(width / 2, height * 0.8, dialogue[dialogueIndex], {
+      fontSize: '28px',
+      fill: '#ffffff',
+      fontFamily: 'Arial',
+      wordWrap: { width: width * 0.8 },
+      align: 'center'
+    }).setOrigin(0.5);
+
+    this.input.on('pointerdown', () => {
+      dialogueIndex++;
+      if (dialogueIndex < dialogue.length) {
+        dialogueText.setText(dialogue[dialogueIndex]);
+      } else {
+        this.scene.start('Level1Superposition'); // Transition correctly
+      }
+    });
   }
 }
 
@@ -71,13 +100,9 @@ const config = {
   width: window.innerWidth,
   height: window.innerHeight,
   parent: 'game-container',
-  scene: [MainScene],
-  physics: {
-    default: 'arcade',
-    arcade: { gravity: { y: 0 } }
-  },
+  scene: [MainScene, IntroScene, Level1Superposition], // Include Level1Superposition
   scale: {
-    mode: Phaser.Scale.FIT, // Ensure the entire image fits inside the screen
+    mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
   }
 };
