@@ -4,9 +4,9 @@ import "../App.css"; // Import your CSS
 import axios from 'axios';
 
 
-let user = undefined;
+//let user = undefined;
 
-const Sign_Up = () => {
+const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -182,4 +182,4 @@ const Sign_Up = () => {
   );
 };
 
-export default Sign_Up;
+export default SignUp;

@@ -43,20 +43,20 @@ class MainScene extends Phaser.Scene {
     });
 
     // Fullscreen toggle button
-    const fullscreenButton = this.add.text(this.cameras.main.width - 150, 20, 'Fullscreen', {
+    this.add.text(this.cameras.main.width - 150, 20, 'Fullscreen', {
       fontSize: '20px',
       fill: '#fff',
       backgroundColor: '#000'
-    })
-    .setOrigin(0.5, 0)
-    .setInteractive()
-    .on('pointerdown', () => {
+  })
+  .setOrigin(0.5, 0)
+  .setInteractive()
+  .on('pointerdown', () => {
       if (this.scale.isFullscreen) {
-        this.scale.stopFullscreen();
+          this.scale.stopFullscreen();
       } else {
-        this.scale.startFullscreen();
+          this.scale.startFullscreen();
       }
-    });
+  });
   }
 
   showIntroDialogue() {

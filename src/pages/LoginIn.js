@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../App.css"; // Import your CSS
 
-const Login_In = () => {
+const LoginIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -156,4 +156,4 @@ const Login_In = () => {
   );
 };
 
-export default Login_In;
+export default LoginIn;
