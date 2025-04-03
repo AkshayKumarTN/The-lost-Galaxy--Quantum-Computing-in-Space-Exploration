@@ -46,6 +46,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "babel-jest": "^29.7.0",
     "jest": "^27.5.1",
-    "jest-canvas-mock": "^2.5.2"
+    "jest-canvas-mock": "^2.5.2",
+    "phaser3spectorjs": "^0.0.8"
   }
 }

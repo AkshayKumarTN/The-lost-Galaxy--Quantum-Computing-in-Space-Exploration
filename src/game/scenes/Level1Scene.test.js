@@ -2,10 +2,12 @@ import 'jest-canvas-mock';
 
 import Level1Scene from '../scenes/Level1Scene';
 
+jest.mock('phaser3spectorjs', () => {});
+
 test('Jest is working', () => {
   expect(true).toBe(true);
 });
-jest.mock('phaser3spectorjs', () => {});
+
 
 test('Level1Scene initializes correctly', () => {
   const scene = new Level1Scene();
