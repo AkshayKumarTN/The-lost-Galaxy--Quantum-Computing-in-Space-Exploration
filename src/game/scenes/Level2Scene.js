@@ -196,14 +196,33 @@ class Level2Scene extends Phaser.Scene {
     this.resultHistory.push(result);
   }
 
-  // Finalize the secret key
   finalizeKey() {
+    // Display the secret key on the screen
     this.add.text(this.cameras.main.width / 2, 650, `Secret Key: ${this.secretKey}`, {
       fontSize: '28px',
       fill: '#0f0',
       backgroundColor: '#000'
     }).setOrigin(0.5);
+  
+    // Store the secret key in the database
+    this.storeSecretKeyInDatabase(this.secretKey);
   }
+  
+  storeSecretKeyInDatabase(secretKey) {
+    const apiUrl = 'http://localhost:3000/api/storeProgress';
+
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ level: 2, secretKey: secretKey }) // Include level
+    })
+    .then(response => response.json())
+    .then(data => console.log('Success:', data))
+    .catch(error => console.error('Error:', error));
+}
+  
 }
 
 export default Level2Scene;
