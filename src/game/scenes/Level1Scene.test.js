@@ -1,5 +1,5 @@
 import 'jest-canvas-mock';
-import Phaser from 'phaser';
+
 import Level1Scene from '../scenes/Level1Scene';
 
 test('Jest is working', () => {
