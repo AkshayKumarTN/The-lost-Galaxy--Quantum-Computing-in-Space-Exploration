@@ -215,8 +215,10 @@ const quizData = [
 class Level1Scene extends Phaser.Scene {
   constructor() {
     super({ key: 'Level1Scene' });
-    this.incorrectText = null;
     this.stars = [];
+    this.probabilityTexts = [];
+    this.scannerActive = false;
+    this.correctStar = null;
   }
 
   preload() {
@@ -226,45 +228,41 @@ class Level1Scene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale;
-    
-    this.background = this.add.image(width / 2, height / 2, 'space_bg').setOrigin(0.5, 0.5);
-    this.background.setDisplaySize(width, height);
 
-    this.backgroundBounds = {
-      xMin: width * 0.1,
-      xMax: width * 0.9,
-      yMin: height * 0.1,
-      yMax: height * 0.9
-    };
+    this.add.image(width / 2, height / 2, 'space_bg').setOrigin(0.5, 0.5).setDisplaySize(width, height);
 
     this.add.text(width / 2, 50, 'Level 1: Superposition Navigation – Finding the Lost Ship', {
       fontSize: '32px',
       fill: '#ffffff'
     }).setOrigin(0.5, 0);
-    
-    this.scannerActive = false;
-    this.correctStar = null;
 
-    this.scannerStatusText = this.add.text(width / 2, height - 30, 
-      "Quantum Scanner: Disabled", 
-      { fontSize: '20px', fill: '#ffff00' }
-    ).setOrigin(0.5);
+    this.scannerStatusText = this.add.text(width / 2, height - 30, "Quantum Scanner: Disabled", {
+      fontSize: '20px',
+      fill: '#ffff00'
+    }).setOrigin(0.5);
 
     this.showQuiz();
   }
 
   showQuiz() {
+    this.clearStars();
+
     let questionIndex = Phaser.Math.Between(0, quizData.length - 1);
     let questionData = quizData[questionIndex];
     const { width, height } = this.scale;
 
-    this.questionText = this.add.text(width / 2, height / 3, questionData.question, { fontSize: '24px', fill: '#fff', align: 'center' }).setOrigin(0.5);
+    this.questionText = this.add.text(width / 2, height / 3, questionData.question, {
+      fontSize: '24px',
+      fill: '#fff',
+      align: 'center'
+    }).setOrigin(0.5);
 
     this.optionTexts = questionData.options.map((option, index) => {
-      let optionText = this.add.text(width / 2, height / 2 + index * 40, option, { fontSize: '18px', fill: '#0ff', align: 'center' })
-        .setOrigin(0.5)
-        .setInteractive()
-        .on('pointerdown', () => this.checkAnswer(option, questionData.answer, optionText));
+      let optionText = this.add.text(width / 2, height / 2 + index * 40, option, {
+        fontSize: '18px',
+        fill: '#0ff',
+        align: 'center'
+      }).setOrigin(0.5).setInteractive().on('pointerdown', () => this.checkAnswer(option, questionData.answer, optionText));
       return optionText;
     });
   }
@@ -276,7 +274,7 @@ class Level1Scene extends Phaser.Scene {
     } else {
       this.scannerActive = false;
       this.scannerStatusText.setText("Quantum Scanner: Disabled").setFill('#ffff00');
-      selectedText.setFill('#ff0000');
+      selectedText.setFill('#ff0000'); // Highlight incorrect answer in red
     }
     this.clearQuiz();
     this.showStars();
@@ -287,49 +285,63 @@ class Level1Scene extends Phaser.Scene {
     this.optionTexts.forEach(text => text.destroy());
   }
 
-  clearStars() {
-    if (this.stars.length) {
-      this.stars.forEach(star => star.destroy());
-      this.stars = [];
-    }
-  }
-
   showStars() {
-    this.clearStars();
-    const { xMin, xMax, yMin, yMax } = this.backgroundBounds;
-    this.correctStar = Phaser.Math.Between(0, 9);
+    this.clearStars(); // Ensure previous stars and probabilities are removed
 
-    for (let i = 0; i < 10; i++) {
+    const { width, height } = this.scale;
+    const xMin = width * 0.1, xMax = width * 0.9, yMin = height * 0.1, yMax = height * 0.9;
+    
+    this.stars = [];
+    this.probabilityTexts = [];
+
+    let numStars = Phaser.Math.Between(7, 10);
+    let correctIndex = Phaser.Math.Between(0, numStars - 1);
+
+    for (let i = 0; i < numStars; i++) {
       let x = Phaser.Math.Between(xMin, xMax);
       let y = Phaser.Math.Between(yMin, yMax);
       let star = this.add.circle(x, y, 5, 0xffff00).setInteractive();
-      let probabilityScore = Phaser.Math.Between(10, 90);
       
-      if (this.scannerActive) {
-        this.add.text(x - 10, y + 20, `Score: ${probabilityScore}%`, { fontSize: '14px', fill: '#fff' });
-      }
-      
-      star.on('pointerdown', () => this.checkStar(i, star));
+      star.correct = (i === correctIndex);
       this.stars.push(star);
+
+      if (this.scannerActive) {
+        let probabilityScore = Phaser.Math.Between(50, 100).toFixed(2); // Higher probability for correct star
+        if (star.correct) probabilityScore = "99.9";
+        let probText = this.add.text(x - 10, y + 20, `Score: ${probabilityScore}%`, { fontSize: '14px', fill: '#fff' });
+        this.probabilityTexts.push(probText);
+      }
+
+      star.on('pointerdown', () => this.checkStar(star));
     }
   }
 
-  checkStar(index, star) {
-    if (index === this.correctStar) {
-      let lostShip = this.add.image(star.x, star.y, 'lostShip').setOrigin(0.5, 0.5);
-      lostShip.setScale(0.1);
-      this.tweens.add({
-        targets: lostShip,
-        scale: { from: 0.1, to: 1 },
-        duration: 2000,
-        onComplete: () => this.scene.start('Level2Scene')
-      });
+  checkStar(selectedStar) {
+    if (selectedStar.correct) {
+      this.revealLostShip(selectedStar);
     } else {
       this.clearStars();
       this.showQuiz();
     }
   }
+
+  revealLostShip(star) {
+    let lostShip = this.add.image(star.x, star.y, 'lostShip').setOrigin(0.5, 0.5).setScale(0);
+    this.tweens.add({
+      targets: lostShip,
+      scale: 1.5,
+      duration: 2000,
+      ease: 'Linear',
+      onComplete: () => this.scene.start('Level2Scene')
+    });
+  }
+
+  clearStars() {
+    this.stars.forEach(star => star.destroy());
+    this.probabilityTexts.forEach(text => text.destroy());
+    this.stars = [];
+    this.probabilityTexts = [];
+  }
 }
 
 export default Level1Scene;
-
