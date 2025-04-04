@@ -19,3 +19,25 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
+
+## Database Setup
+
+The game requires a database to store player progress, game states, a secret key, and user data. Follow these steps to set up the database.
+
+### Requirements:
+- **Database**: MongoDB  
+- **Database Name**: `QuantumComputing_Users`  
+- **Library**: Mongoose  
+
+### Steps to Set Up MongoDB:
+1. Ensure MongoDB is installed and running on your local machine.  
+2. The database name used is `QuantumComputing_Users`.  
+3. Configure the `.env` file:  
+   ```env
+   MONGO_URI=mongodb://localhost:27017/QuantumComputing_Users 
+
+4. Navigate to the directory where users.js is stored.
+5. Run the following command to start the server on port 3000:
+   node users.js
+
+This will connect the application to the MongoDB database and start the server, allowing user data, the secret key, and progress to be stored and retrieved correctly.
