@@ -118,6 +118,75 @@ app.post('/api/storeProgress', async (req, res) => {
   }
 });
 
+// Store Progress API - Store player progress
+app.post('/api/storeProgress', async (req, res) => {
+  const { level, secretKey, email } = req.body;  // Expecting level, secretKey, and email
+  
+  if (!level || !secretKey || !email) {
+    return res.status(400).json({ message: 'All fields are required.' });
+  }
+
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    console.log('Connected to MongoDB for storing progress');
+
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    // Check if progress for the given player and level already exists
+    const existingProgress = await collection.findOne({ email, level });
+
+    if (existingProgress) {
+      // If progress exists, update the progress
+      await collection.updateOne(
+        { email, level },
+        { $set: { secretKey, timestamp: new Date() } }
+      );
+      res.json({ message: 'Progress updated successfully' });
+    } else {
+      // If no progress exists, insert a new progress record
+      const newProgress = { email, level, secretKey, timestamp: new Date() };
+      await collection.insertOne(newProgress);
+      res.json({ message: 'Progress saved successfully' });
+    }
+  } catch (error) {
+    console.error('Error storing progress:', error);
+    res.status(500).json({ message: 'Error storing progress', error });
+  } finally {
+    await client.close();
+  }
+});
+
+// Leaderboard API - Fetch leaderboard data
+app.get('/api/leaderboard', async (req, res) => {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    console.log('Connected to MongoDB for leaderboard');
+
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    // Fetch all players' data and sort by level in descending order, limiting to the top 10 players
+    const leaderboard = await collection.find({})
+      .sort({ level: -1 })  // Sort by level in descending order
+      .limit(10)  // Limit to top 10 players
+      .toArray();
+
+    // Return the leaderboard data
+    res.json(leaderboard);
+
+  } catch (err) {
+    console.error('Error fetching leaderboard:', err);
+    res.status(500).json({ message: 'Error fetching leaderboard', error: err });
+  } finally {
+    await client.close();
+  }
+});
+
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
