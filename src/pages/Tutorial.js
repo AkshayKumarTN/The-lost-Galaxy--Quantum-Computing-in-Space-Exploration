@@ -1,7 +1,18 @@
 // Scrum-1 tutorial for Quantum
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Tutorial.css';
+
+// Custom hook for slide navigation
+const useSlideNavigation = (slidesLength) => {
+  const [index, setIndex] = React.useState(0);
+
+  const changeSlide = (direction) => {
+    setIndex((prev) => Math.min(Math.max(prev + direction, 0), slidesLength - 1));
+  };
+
+  return { index, changeSlide };
+};
 
 const slides = [
   {
@@ -62,11 +73,8 @@ const slides = [
 ];
 
 const Tutorial = () => {
-  const [index, setIndex] = useState(0);
   const navigate = useNavigate();
-
-  const nextSlide = () => setIndex((prev) => Math.min(prev + 1, slides.length - 1));
-  const prevSlide = () => setIndex((prev) => Math.max(prev - 1, 0));
+  const { index, changeSlide } = useSlideNavigation(slides.length); // Using the custom hook
 
   return (
     <div className="tutorial-container">
@@ -75,8 +83,9 @@ const Tutorial = () => {
         <div className="slide-content">{slides[index].content}</div>
       </div>
       <div className="navigation">
-        <button onClick={prevSlide} disabled={index === 0}>Previous</button>
-        <button onClick={nextSlide} disabled={index === slides.length - 1}>Next</button>
+        {/* Navigation buttons */}
+        <button onClick={() => changeSlide(-1)} disabled={index === 0}>Previous</button>
+        <button onClick={() => changeSlide(1)} disabled={index === slides.length - 1}>Next</button>
       </div>
       <button onClick={() => navigate('/')}>Back to Home</button>
     </div>

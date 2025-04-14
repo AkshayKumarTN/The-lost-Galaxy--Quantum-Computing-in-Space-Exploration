@@ -32,7 +32,11 @@ app.post('/api/signup', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const newUser = { email, password: hashedPassword };
+    const newUser = { 
+      email, 
+      password: hashedPassword, 
+      level: 0,       // <-- new add
+    };
 
     const result = await userCollection.insertOne(newUser);
     res.status(201).json({ message: 'User created successfully', userId: result.insertedId });
@@ -68,55 +72,6 @@ const updatePassword = async (id, newPassword) => {
   return updatedInfo;
 };
 
-//Store Progress API
-app.post('/api/storeProgress', async (req, res) => {
-  const { level, secretKey } = req.body;  // Expecting both level and secretKey
-
-  if (!level || !secretKey) {
-    return res.status(400).json({ message: 'Both level and secretKey are required.' });
-  }
-
-  const client = new MongoClient(uri);
-
-  try {
-    await client.connect();
-    console.log('Connected to MongoDB');
-
-    const db = client.db(dbName);
-    const collection = db.collection(collectionName);
-
-    const existingProgress = await collection.findOne({ level });
-
-    if (existingProgress) {
-      // If progress exists, update the secretKey
-      await collection.updateOne(
-        { level },
-        { $set: { secretKey, timestamp: new Date() } }
-      );
-
-      const storedProgress = await collection.findOne({ level });
-      console.log("After Update - Stored Progress:", storedProgress); // Debugging
-
-      return res.json({ message: 'Progress updated successfully!', storedProgress });
-    } else {
-      // If no progress exists, create a new document with the secretKey
-      const newDocument = { level, secretKey, timestamp: new Date() };
-      const result = await collection.insertOne(newDocument);
-
-      const storedProgress = await collection.findOne({ level });
-      console.log("After Insert - Stored Progress:", storedProgress); // Debugging
-
-      return res.json({ message: 'Progress initialized with secretKey!', storedProgress });
-    }
-
-  } catch (err) {
-    console.error('Error updating progress:', err);
-    res.status(500).json({ message: 'Error updating progress', error: err });
-
-  } finally {
-    await client.close();
-  }
-});
 
 // Store Progress API - Store player progress
 app.post('/api/storeProgress', async (req, res) => {
@@ -162,30 +117,60 @@ app.post('/api/storeProgress', async (req, res) => {
 // Leaderboard API - Fetch leaderboard data
 app.get('/api/leaderboard', async (req, res) => {
   const client = new MongoClient(uri);
-
   try {
     await client.connect();
-    console.log('Connected to MongoDB for leaderboard');
-
-    const db = client.db(dbName);
-    const collection = db.collection(collectionName);
-
-    // Fetch all players' data and sort by level in descending order, limiting to the top 10 players
-    const leaderboard = await collection.find({})
-      .sort({ level: -1 })  // Sort by level in descending order
-      .limit(10)  // Limit to top 10 players
-      .toArray();
-
-    // Return the leaderboard data
+    const db = client.db("QuantumComputing_Users");
+    const collection = db.collection("users");
+ 
+    const leaderboard = await collection.aggregate([
+      {
+        $project: {
+          username: 1,
+          email: 1,
+          level: { $toInt: "$level" },
+          score: { $toInt: "$score" }
+        }
+      },
+      { $sort: { score: -1, level: -1 } }, // prioritize high score, then level
+      { $limit: 10 }
+    ]).toArray();
+ 
     res.json(leaderboard);
-
   } catch (err) {
-    console.error('Error fetching leaderboard:', err);
-    res.status(500).json({ message: 'Error fetching leaderboard', error: err });
+    console.error("Error fetching leaderboard:", err);
+    res.status(500).json({ message: "Error fetching leaderboard", error: err });
   } finally {
     await client.close();
   }
 });
+
+// Update Level API
+app.post('/api/updateLevel', async (req, res) => {
+  const { email, level } = req.body;
+
+  if (!email || typeof email !== 'string' || !level || typeof level !== 'number') {
+    return res.status(400).json({ message: 'Invalid email or level.' });
+  }
+
+  try {
+    const userCollection = await users();
+    const updatedUser = await userCollection.findOneAndUpdate(
+      { email },
+      { $set: { level } },
+      { returnDocument: 'after' }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    res.json({ message: 'Level updated successfully.', user: updatedUser });
+  } catch (error) {
+    console.error('Error updating level:', error);
+    res.status(500).json({ message: 'Failed to update level.' });
+  }
+});
+
 
 const PORT = 3000;
 app.listen(PORT, () => {

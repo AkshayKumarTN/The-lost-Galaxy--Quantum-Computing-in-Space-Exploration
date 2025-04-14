@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import './LeaderBoard.css';
-
+import axios from 'axios';
+ 
 const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
-
+ 
   // Fetch leaderboard data
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/leaderboard');
-        const data = await response.json();
-        setLeaderboardData(data);  // Set the data
-      } catch (error) {
-        console.error('Error fetching leaderboard data:', error);
+        const response = await axios.get('http://localhost:3000/api/leaderboard');
+        setLeaderboardData(response.data);
+      } catch (err) {
+        console.error('Error fetching leaderboard data:', err);
       }
     };
-
+ 
     fetchLeaderboard();
-  }, []);  // Call only once on initial render
-
+  }, []);  
+ 
   return (
     <div className="leaderboard-container">
       <h1>Leaderboard</h1>
@@ -45,5 +45,5 @@ const Leaderboard = () => {
     </div>
   );
 };
-
+ 
 export default Leaderboard;

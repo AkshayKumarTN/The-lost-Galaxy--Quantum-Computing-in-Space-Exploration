@@ -327,14 +327,39 @@ class Level1Scene extends Phaser.Scene {
 
   revealLostShip(star) {
     let lostShip = this.add.image(star.x, star.y, 'lostShip').setOrigin(0.5, 0.5).setScale(0);
+    
     this.tweens.add({
       targets: lostShip,
       scale: 1.5,
       duration: 2000,
       ease: 'Linear',
-      onComplete: () => this.scene.start('Level2Scene')
+      onComplete: () => {
+        // Send game result to the backend after clearing the level
+        fetch('http://localhost:3000/api/gameResult', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: 'remese@gmail.com', // ⚡ Replace with the actual logged-in user's email
+            level: 1,
+            score: 800, // ⚡ Replace with the actual game score
+            time: 120   // ⚡ Record the time spent in the game
+          })
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log('Successfully saved game result:', data);
+          this.scene.start('Level2Scene');
+        })
+        .catch(err => {
+          console.error('Failed to save game result:', err);
+          this.scene.start('Level2Scene');
+        });
+      }
     });
   }
+  
 
   clearStars() {
     this.stars.forEach(star => star.destroy());
