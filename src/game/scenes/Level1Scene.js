@@ -1,346 +1,261 @@
 import Phaser from 'phaser';
 
-const quizData = [
-  {
-    question: "What is the primary purpose of Quantum Key Distribution (QKD)?",
-    options: [
-      "A) To increase internet speed",
-      "B) To securely distribute encryption keys",
-      "C) To create quantum computers",
-      "D) To generate random numbers"
-    ],
-    answer: "B) To securely distribute encryption keys"
-  },
-  {
-    question: "Which quantum principle is used in QKD to detect eavesdroppers?",
-    options: [
-      "A) Superposition",
-      "B) Quantum Tunneling",
-      "C) No-Cloning Theorem",
-      "D) Quantum Entanglement"
-    ],
-    answer: "C) No-Cloning Theorem"
-  },
-  {
-    question: "What does the 'No-Cloning Theorem' state?",
-    options: [
-      "A) Quantum information can be copied",
-      "B) Quantum information cannot be perfectly copied",
-      "C) Quantum states can be teleported",
-      "D) Quantum states can be measured without disturbance"
-    ],
-    answer: "B) Quantum information cannot be perfectly copied"
-  },
-  {
-    question: "Which quantum phenomenon allows a particle to exist in multiple states simultaneously?",
-    options: [
-      "A) Superposition",
-      "B) Quantum Tunneling",
-      "C) No-Cloning Theorem",
-      "D) Decoherence"
-    ],
-    answer: "A) Superposition"
-  },
-  {
-    question: "What is the main advantage of QKD over classical key distribution?",
-    options: [
-      "A) It is faster",
-      "B) It is unbreakable under quantum mechanics",
-      "C) It requires no physical transmission medium",
-      "D) It does not require encryption"
-    ],
-    answer: "B) It is unbreakable under quantum mechanics"
-  },
-  {
-    question: "What is the role of entanglement in quantum cryptography?",
-    options: [
-      "A) It allows instantaneous communication",
-      "B) It enables secure key exchange by ensuring correlated results",
-      "C) It speeds up classical encryption",
-      "D) It is used for error correction"
-    ],
-    answer: "B) It enables secure key exchange by ensuring correlated results"
-  },
-  {
-    question: "Which protocol is commonly used for Quantum Key Distribution (QKD)?",
-    options: [
-      "A) RSA",
-      "B) BB84",
-      "C) AES",
-      "D) SHA-256"
-    ],
-    answer: "B) BB84"
-  },
-  {
-    question: "What happens if an eavesdropper tries to intercept a QKD transmission?",
-    options: [
-      "A) The key transmission speeds up",
-      "B) The key remains unchanged",
-      "C) The quantum state is disturbed, alerting the users",
-      "D) The key is securely stored"
-    ],
-    answer: "C) The quantum state is disturbed, alerting the users"
-  },
-  {
-    question: "Which scientist is credited with introducing the BB84 protocol?",
-    options: [
-      "A) Richard Feynman",
-      "B) Charles Bennett and Gilles Brassard",
-      "C) Albert Einstein",
-      "D) John Bell"
-    ],
-    answer: "B) Charles Bennett and Gilles Brassard"
-  },
-  {
-    question: "What physical property of photons does BB84 use for encoding information?",
-    options: [
-      "A) Mass",
-      "B) Spin",
-      "C) Polarization",
-      "D) Charge"
-    ],
-    answer: "C) Polarization"
-  },
-  {
-    question: "Which quantum concept ensures the secrecy of QKD?",
-    options: [
-      "A) Quantum Entanglement",
-      "B) Heisenberg Uncertainty Principle",
-      "C) Quantum Supremacy",
-      "D) Quantum Parallelism"
-    ],
-    answer: "B) Heisenberg Uncertainty Principle"
-  },
-  {
-    question: "What is the primary goal of post-quantum cryptography?",
-    options: [
-      "A) To create faster encryption methods",
-      "B) To secure data against quantum computers",
-      "C) To replace all classical cryptographic methods",
-      "D) To improve cloud computing security"
-    ],
-    answer: "B) To secure data against quantum computers"
-  },
-  {
-    question: "Which of the following is a quantum-safe cryptographic algorithm?",
-    options: [
-      "A) RSA",
-      "B) ECC",
-      "C) Lattice-based cryptography",
-      "D) MD5"
-    ],
-    answer: "C) Lattice-based cryptography"
-  },
-  {
-    question: "What type of attack can a quantum computer perform efficiently on RSA encryption?",
-    options: [
-      "A) Brute force attack",
-      "B) Shor's algorithm-based factoring",
-      "C) Man-in-the-middle attack",
-      "D) Side-channel attack"
-    ],
-    answer: "B) Shor's algorithm-based factoring"
-  },
-  {
-    question: "Which quantum algorithm provides an exponential speedup for searching?",
-    options: [
-      "A) Shor's Algorithm",
-      "B) Grover's Algorithm",
-      "C) RSA Algorithm",
-      "D) Simon's Algorithm"
-    ],
-    answer: "B) Grover's Algorithm"
-  },
-  {
-    question: "What is quantum decoherence?",
-    options: [
-      "A) The process of measuring a quantum state",
-      "B) The loss of quantum information due to interaction with the environment",
-      "C) The act of quantum entanglement",
-      "D) The process of quantum teleportation"
-    ],
-    answer: "B) The loss of quantum information due to interaction with the environment"
-  },
-  {
-    question: "What is a qubit?",
-    options: [
-      "A) A classical bit in a quantum system",
-      "B) A basic unit of quantum information",
-      "C) A quantum error correction technique",
-      "D) A noise source in quantum computing"
-    ],
-    answer: "B) A basic unit of quantum information"
-  },
-  {
-    question: "Which material is often used for superconducting quantum computers?",
-    options: [
-      "A) Silicon",
-      "B) Niobium",
-      "C) Gold",
-      "D) Iron"
-    ],
-    answer: "B) Niobium"
-  },
-  {
-    question: "What is quantum supremacy?",
-    options: [
-      "A) The moment when a quantum computer outperforms classical computers in a specific task",
-      "B) The point where all classical encryption becomes obsolete",
-      "C) The theory that quantum computers can solve all problems",
-      "D) A stage of quantum computer cooling"
-    ],
-    answer: "A) The moment when a quantum computer outperforms classical computers in a specific task"
-  },
-  {
-    question: "Which of the following is a major challenge in building practical quantum computers?",
-    options: [
-      "A) Lack of classical computing power",
-      "B) Quantum decoherence",
-      "C) High energy consumption",
-      "D) Limited internet access"
-    ],
-    answer: "B) Quantum decoherence"
-  },
-  {
-    question: "What is quantum entanglement?",
-    options: [
-      "A) A process where quantum states become independent",
-      "B) A phenomenon where two quantum particles share a linked state regardless of distance",
-      "C) A method of increasing computation speed",
-      "D) A classical encryption method"
-    ],
-    answer: "B) A phenomenon where two quantum particles share a linked state regardless of distance"
-  }
-];
 class Level1Scene extends Phaser.Scene {
   constructor() {
     super({ key: 'Level1Scene' });
-    this.stars = [];
-    this.probabilityTexts = [];
-    this.scannerActive = false;
-    this.correctStar = null;
+
+    this.correctClicks = 0;
+    this.requiredClicks = 3;
+    this.shipParts = []; 
+    this.shipPartIndexes = []; 
+
+    this.possibleSpots = [];
+    this.realShipIndex = null;
+    this.fakeShipIndices = [];
+    this.totalFakeShips = 3;
+
+    this.instructionText = null;
   }
 
   preload() {
-    this.load.image('space_bg', 'assets/images/space_bg.png');
-    this.load.image('lostShip', 'assets/images/lostShip.png');
+    this.load.image('planet', 'assets/images/planet.png');
+    this.load.image('ship', 'assets/images/lostShip.png');
+    this.load.image('shipPart', 'assets/images/ghost.png'); 
   }
 
   create() {
-    const { width, height } = this.scale;
-
-    this.add.image(width / 2, height / 2, 'space_bg').setOrigin(0.5, 0.5).setDisplaySize(width, height);
-
-    this.add.text(width / 2, 50, 'Level 1: Superposition Navigation – Finding the Lost Ship', {
-      fontSize: '32px',
-      fill: '#ffffff'
-    }).setOrigin(0.5, 0);
-
-    this.scannerStatusText = this.add.text(width / 2, height - 30, "Quantum Scanner: Disabled", {
-      fontSize: '20px',
-      fill: '#ffff00'
-    }).setOrigin(0.5);
-
-    this.showQuiz();
+    this.addBackground();
+    this.createCaption();
+    this.createSideDialogue();
+    this.createClickableSpots();
+    this.setRandomShipParts();
+    this.registerInput();
   }
 
-  showQuiz() {
-    this.clearStars();
+  addBackground() {
+    this.add.image(400, 300, 'planet'); // Keeps the planet visible
+  }
 
-    let questionIndex = Phaser.Math.Between(0, quizData.length - 1);
-    let questionData = quizData[questionIndex];
-    const { width, height } = this.scale;
+  createCaption() {
+    this.instructionText = this.add.text(80, 600,  // Adjusted Y position to be lower
+      "🧪 The ship is in quantum superposition.\nScan to find the real ship before the decoys fool you!",
+      {
+        fontSize: '20px',
+        fill: '#fff',
+        fontStyle: 'italic',
+        backgroundColor: 'rgba(30, 30, 60, 0.6)',
+        padding: { x: 20, y: 10 },
+        align: 'center',
+        borderRadius: 8,
+      }
+    ).setDepth(5);
+  }
 
-    this.questionText = this.add.text(width / 2, height / 3, questionData.question, {
-      fontSize: '24px',
-      fill: '#fff',
-      align: 'center'
-    }).setOrigin(0.5);
+  createSideDialogue() {
+    const boxWidth = 300;
+    const boxHeight = 230;
+    const x = 100;
+    const y = 100;
 
-    this.optionTexts = questionData.options.map((option, index) => {
-      let optionText = this.add.text(width / 2, height / 2 + index * 40, option, {
-        fontSize: '18px',
-        fill: '#0ff',
-        align: 'center'
-      }).setOrigin(0.5).setInteractive().on('pointerdown', () => this.checkAnswer(option, questionData.answer, optionText));
-      return optionText;
+    this.add.rectangle(x + boxWidth / 2, y + boxHeight / 2, boxWidth, boxHeight, 0x1e1e2f, 0.8)
+      .setStrokeStyle(2, 0x00ffff)
+      .setDepth(30);
+
+    this.add.text(x + 20, y + 20,
+      "🧬 QUANTUM TIP:\n\nIn quantum mechanics, objects can exist in a *superposition* of states.\nThis means that the ship is not in just one place!\nInstead, it is in multiple places at once, existing in *probabilities*.\n\nClick on three tiles to reveal the parts and find the real ship!",
+      {
+        fontSize: '14px',
+        fill: '#eeeeff',
+        wordWrap: { width: boxWidth - 40 },
+        fontStyle: 'italic',
+      }
+    ).setDepth(31);
+  }
+
+  showCaption(message) {
+    this.instructionText.setText(`🧠 ${message}`);
+  }
+
+  setRandomShipParts() {
+    const allIndices = Phaser.Utils.Array.NumberArray(0, this.possibleSpots.length - 1);
+    Phaser.Utils.Array.Shuffle(allIndices);
+
+    this.shipPartIndexes = allIndices.slice(0, this.requiredClicks); // Set the first 3 spots as ship parts
+    this.fakeShipIndices = allIndices.slice(this.requiredClicks, this.totalFakeShips + this.requiredClicks); // Decoy positions
+
+    this.shipParts = this.shipPartIndexes.map(index => this.add.image(
+      this.possibleSpots[index].x,
+      this.possibleSpots[index].y,
+      'shipPart'
+    ).setAlpha(0).setScale(0.1));
+  }
+
+  registerInput() {
+    this.input.on('pointerdown', this.onPointerDown, this);
+  }
+
+  onPointerDown(pointer) {
+    const clickedSpot = this.getClickedSpot(pointer);
+    if (clickedSpot && !clickedSpot.getData('clicked')) {
+      clickedSpot.setData('clicked', true);
+      this.handleSpotClick(clickedSpot);
+    }
+  }
+
+  getClickedSpot(pointer) {
+    return this.possibleSpots.find(spot =>
+      spot.getBounds().contains(pointer.x, pointer.y)
+    ) || null;
+  }
+
+  handleSpotClick(spot) {
+    const index = spot.getData('index');
+
+    this.createScanPulse(spot.x, spot.y);
+
+    if (this.shipPartIndexes.includes(index)) {
+      this.correctClicks++;
+      this.showHitEffect(spot, 0x00ff00); // green
+      this.showCaption(`🎯 You've found a ship part! (${this.correctClicks} out of ${this.requiredClicks})`);
+
+      this.revealShipPart(index); // Reveal the ship part on the tile clicked
+
+      if (this.correctClicks >= this.requiredClicks) {
+        this.assembleShip();
+      }
+    } else if (this.fakeShipIndices.includes(index)) {
+      this.showHitEffect(spot, 0xff0033);
+      spot.setFillStyle(0xff0033, 0.3);
+      this.showCaption("💥 That was a decoy ship!");
+    } else {
+      this.showHitEffect(spot, 0xffff00); // yellow
+      spot.setFillStyle(0xffff00, 0.3); // Keep it lit yellow
+      this.showCaption("🌌 Empty space. Quantum state reset!");
+    }
+  }
+
+  showHitEffect(spot, color) {
+    const highlight = this.add.rectangle(spot.x, spot.y, 70, 70, color, 0.4).setDepth(2);
+    this.tweens.add({
+      targets: highlight,
+      alpha: 0,
+      duration: 1000,
+      onComplete: () => highlight.destroy(),
+    });
+
+    spot.setFillStyle(color, 0.4);
+  }
+
+  createScanPulse(x, y) {
+    const pulse = this.add.circle(x, y, 10, 0xffffff, 0.5).setDepth(1);
+    this.tweens.add({
+      targets: pulse,
+      radius: 35,
+      alpha: 0,
+      duration: 300,
+      ease: 'Cubic.easeOut',
+      onComplete: () => pulse.destroy(),
     });
   }
 
-  checkAnswer(selected, correct, selectedText) {
-    if (selected === correct) {
-      this.scannerActive = true;
-      this.scannerStatusText.setText("Quantum Scanner: Active").setFill('#00ff00');
-    } else {
-      this.scannerActive = false;
-      this.scannerStatusText.setText("Quantum Scanner: Disabled").setFill('#ffff00');
-      selectedText.setFill('#ff0000'); // Highlight incorrect answer in red
-    }
-    this.clearQuiz();
-    this.showStars();
+  resetProgress() {
+    this.correctClicks = 0;
+    this.cameras.main.shake(200);
+
+    this.possibleSpots.forEach(spot => {
+      spot.setData('clicked', false);
+      spot.setFillStyle(0x000044, 0.2);
+    });
   }
 
-  clearQuiz() {
-    this.questionText.destroy();
-    this.optionTexts.forEach(text => text.destroy());
+  revealShipPart(index) {
+    this.shipParts[this.shipPartIndexes.indexOf(index)].setAlpha(1);
   }
 
-  showStars() {
-    this.clearStars(); // Ensure previous stars and probabilities are removed
+  assembleShip() {
+    this.showCaption("🚀 You've found all the ship parts!\nNow the ship will be revealed!");
 
-    const { width, height } = this.scale;
-    const xMin = width * 0.1, xMax = width * 0.9, yMin = height * 0.1, yMax = height * 0.9;
-    
-    this.stars = [];
-    this.probabilityTexts = [];
+    // Reveal the ship after the parts are found
+    const spot = this.possibleSpots[this.shipPartIndexes[0]]; // Start with the first spot
+    const glow = this.add.circle(spot.x, spot.y, 50, 0xffff00, 0.5).setDepth(2);
+    this.tweens.add({
+      targets: glow,
+      scale: 2,
+      alpha: 0,
+      duration: 1000,
+      onComplete: () => glow.destroy(),
+    });
 
-    let numStars = Phaser.Math.Between(7, 10);
-    let correctIndex = Phaser.Math.Between(0, numStars - 1);
+    this.shipSprite = this.add.image(spot.x, spot.y, 'ship').setAlpha(0).setScale(0.05);
+    this.tweens.add({
+      targets: this.shipSprite,
+      alpha: 1,
+      duration: 800,
+      ease: 'Sine.easeInOut',
+      onComplete: () => {
+        this.tweens.add({
+          targets: this.shipSprite,
+          scale: 2,  
+          duration: 600,
+          ease: 'Cubic.easeOut',
+          onComplete: () => {
+            this.scene.start('Level2Scene');
+          }
+        });
+      }
+    });
+  }
 
-    for (let i = 0; i < numStars; i++) {
-      let x = Phaser.Math.Between(xMin, xMax);
-      let y = Phaser.Math.Between(yMin, yMax);
-      let star = this.add.circle(x, y, 5, 0xffff00).setInteractive();
-      
-      star.correct = (i === correctIndex);
-      this.stars.push(star);
+  createClickableSpots() {
+    const positions = this.getSpotPositions();
+    const letters = 'ABCDEFGHIJ';
 
-      if (this.scannerActive) {
-        let probabilityScore = Phaser.Math.Between(50, 100).toFixed(2); // Higher probability for correct star
-        if (star.correct) probabilityScore = "99.9";
-        let probText = this.add.text(x - 10, y + 20, `Score: ${probabilityScore}%`, { fontSize: '14px', fill: '#fff' });
-        this.probabilityTexts.push(probText);
+    positions.forEach((pos, index) => {
+      const zone = this.add.zone(pos.x, pos.y, 70, 70)
+        .setOrigin(0.5)
+        .setInteractive()
+        .setData('index', index)
+        .setData('clicked', false);
+
+      this.possibleSpots.push(zone);
+
+      const rect = this.add.rectangle(pos.x, pos.y, 70, 70)
+        .setStrokeStyle(1, 0x00ffff)
+        .setFillStyle(0x000044, 0.2)
+        .setDepth(0);
+
+      // Grid Labels
+      if (index < 10) {
+        this.add.text(pos.x - 30, pos.y - 50, letters[index], {
+          fontSize: '12px',
+          fill: '#aaa',
+        });
+      }
+      if (index % 10 === 0) {
+        this.add.text(pos.x - 60, pos.y - 10, String(index / 10 + 1), {
+          fontSize: '12px',
+          fill: '#aaa',
+        });
       }
 
-      star.on('pointerdown', () => this.checkStar(star));
-    }
-  }
+      zone.setFillStyle = rect.setFillStyle.bind(rect);
 
-  checkStar(selectedStar) {
-    if (selectedStar.correct) {
-      this.revealLostShip(selectedStar);
-    } else {
-      this.clearStars();
-      this.showQuiz();
-    }
-  }
-
-  revealLostShip(star) {
-    let lostShip = this.add.image(star.x, star.y, 'lostShip').setOrigin(0.5, 0.5).setScale(0);
-    this.tweens.add({
-      targets: lostShip,
-      scale: 1.5,
-      duration: 2000,
-      ease: 'Linear',
-      onComplete: () => this.scene.start('Level2Scene')
+      zone.on('pointerover', () => rect.setStrokeStyle(2, 0xffff00));
+      zone.on('pointerout', () => rect.setStrokeStyle(1, 0x00ffff));
     });
   }
 
-  clearStars() {
-    this.stars.forEach(star => star.destroy());
-    this.probabilityTexts.forEach(text => text.destroy());
-    this.stars = [];
-    this.probabilityTexts = [];
+  getSpotPositions() {
+    const positions = [];
+    const startX = 1000; 
+    const startY = 100;
+  
+    for (let x = 0; x < 10; x++) {
+      for (let y = 0; y < 10; y++) {
+        positions.push({ x: startX + x * 70, y: startY + y * 70 });
+      }
+    }
+    return positions;
   }
 }
 
