@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-
+/*REFACTORING: Removed uneccesary comments in script*/
 class Level2Scene extends Phaser.Scene {
   constructor() {
     super({ key: 'Level2Scene' });
@@ -7,8 +7,8 @@ class Level2Scene extends Phaser.Scene {
     this.photonSequence = [];
     this.secretKey = '';
     this.currentPhoton = 0;
-    this.eavesdropChance = 0.2;   // 20% eavesdropping chance
-    this.imageSize = 100;         // Uniform image size
+    this.eavesdropChance = 0.2;   
+    this.imageSize = 100;        
 
     // Lists to store filters and results
     this.filterHistory = [];
@@ -17,16 +17,21 @@ class Level2Scene extends Phaser.Scene {
     this.selectedFilter = null;   // Store the selected filter before sending the photon
   }
 
-  preload() {
-    // Load images
-    this.load.image('playerShip', 'assets/images/playerShip.png');
-    this.load.image('lostShip', 'assets/images/lostShip.png');
-    this.load.image('photon', 'assets/images/photon.png');
 
-    // Load filter images
-    this.load.image('filterRect', 'assets/images/filter_rectilinear.png');
-    this.load.image('filterDiag', 'assets/images/filter_diagonal.png');
+LoadAssets() {
+  this.load.image('playerShip', 'assets/images/playerShip.png');
+  this.load.image('lostShip', 'assets/images/lostShip.png');
+  this.load.image('photon', 'assets/images/photon.png');
+  this.load.image('filterRect', 'assets/images/filter_rectilinear.png');
+  this.load.image('filterDiag', 'assets/images/filter_diagonal.png');
+}
+  
+//REFACTORING: Having load assets in a seperate function
+  preload() {
+    this.LoadAssets();
   }
+
+
 
   create() {
     // Background and Title

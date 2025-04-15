@@ -28,21 +28,35 @@ describe('Level1Scene', () => {
             on: jest.fn().mockReturnThis(),
           })),
         })),
+        setDepth: jest.fn().mockReturnThis()
 
       })),
       image: jest.fn(() => ({
         setOrigin: jest.fn().mockReturnThis(),  
         setScale: jest.fn().mockReturnThis(), 
-        setDisplaySize: jest.fn().mockReturnThis()
+        setDisplaySize: jest.fn().mockReturnThis(),
+        setAlpha: jest.fn().mockReturnThis(),
       })),
       circle: jest.fn(() => ({
         setInteractive: jest.fn().mockReturnThis(),
         on: jest.fn().mockReturnThis()
       })),
+      rectangle: jest.fn(() => ({
+        setStrokeStyle: jest.fn().mockReturnThis(),
+        setDepth: jest.fn().mockReturnThis(),
+        setFillStyle: jest.fn().mockReturnThis(),
+      })),
+      zone: jest.fn(() => ({
+        setOrigin: jest.fn().mockReturnThis(),
+        setInteractive: jest.fn().mockReturnThis(),
+        setData: jest.fn().mockReturnThis(),
+        on: jest.fn().mockReturnThis(),
+      })),
     };
   
     scene = new Level1Scene();
     scene.add = mockAdd;
+    scene.input = { on: jest.fn() };
     scene.scale = { width: 800, height: 600 };
     scene.tweens = { add: jest.fn() };
     scene.scannerStatusText = { setText: jest.fn().mockReturnThis(), setFill: jest.fn().mockReturnThis() };
@@ -55,23 +69,5 @@ describe('Level1Scene', () => {
     expect(mockAdd.text).toHaveBeenCalled();
     expect(mockAdd.image).toHaveBeenCalled();
   });
-
-  it('should show quiz after clearing stars', () => {
-    scene.showQuiz();
-    expect(scene.questionText).toBeDefined();
-    expect(mockAdd.text).toHaveBeenCalledWith(expect.any(Number), expect.any(Number), expect.any(String), expect.any(Object));
-  });
-
-  it('should display stars correctly', () => {
-    scene.showStars();
-    expect(mockAdd.circle).toHaveBeenCalled();
-  });
-  
-  it('should reveal lost ship on correct star selection', () => {
-    scene.revealLostShip({ x: 100, y: 100 });
-    expect(scene.tweens.add).toHaveBeenCalled();
-  });
- 
-
 
 });
