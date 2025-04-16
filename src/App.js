@@ -1,9 +1,10 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Game from './pages/Game';
-import Tutorial from './pages/Tutorial';
-import Login_In from './pages/Login_In';
-import Sign_Up from './pages/Sign_Up';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Game from "./pages/Game";
+import Tutorial from "./pages/Tutorial";
+import LoginIn from "./pages/LoginIn";
+import SignUp from "./pages/SignUp";
+import LeaderBoard from "./pages/LeaderBoard"; 
 
 function App() {
   return (
@@ -12,8 +13,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/game" element={<Game />} />
         <Route path="/tutorial" element={<Tutorial />} />
-        <Route path="/Login_In" element={<Login_In />} /> {/* Corrected to Login_In */}
-        <Route path="/Sign_Up" element={<Sign_Up />} /> {/* Corrected to Sign_Up */}
+        <Route path="/LoginIn" element={<LoginIn />} />
+        <Route path="/SignUp" element={<SignUp />} />
+        <Route path="/leaderboard" element={<LeaderBoard />} /> {/* 新增排行榜頁面 */}
       </Routes>
     </Router>
   );

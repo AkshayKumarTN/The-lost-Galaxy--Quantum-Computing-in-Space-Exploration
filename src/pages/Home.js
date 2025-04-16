@@ -32,15 +32,15 @@ export default function Home() {
       <div className="home-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <img src="/assets/images/The-Lost-Galaxy-Home-icon.png" alt="The Lost Galaxy" height="100" />
         <div style={{ display: 'flex', alignItems: 'center', gap: '1em', fontSize: '20px' }}>
-          <Link to="/Login_In" style={{
-            padding: '.5em 1em',
+          <Link to="/LoginIn" style={{
+            //padding: '.5em 1em',
             color: '#8bb2ff',
             textAlign: 'center',
             fontWeight: '400',
             padding: '10px',
             textDecoration: 'none'
           }}>Log in</Link>
-          <Link to="/Sign_Up" style={{ color: '#8bb2ff', textAlign: 'center', fontWeight: '400', border: '1px solid', borderColor: '#8bb2ff', padding: '10px', textDecoration: 'none' }}>Sign up</Link>
+          <Link to="/SignUp" style={{ color: '#8bb2ff', textAlign: 'center', fontWeight: '400', border: '1px solid', borderColor: '#8bb2ff', padding: '10px', textDecoration: 'none' }}>Sign up</Link>
         </div>
       </div>
 
@@ -85,6 +85,18 @@ export default function Home() {
             }}>
               Learn More
             </HashLink >
+            <Link to="/leaderboard" style={{
+              padding: '.5em 1em',
+              color: '#8bb2ff',
+              textAlign: 'center',
+              fontSize: '1.25em',
+              fontWeight: '600',
+              border: '1px solid',
+              borderColor: '#8bb2ff',
+              textDecoration: 'none'
+            }}>    
+              Leaderboard
+            </Link>
             {/* <div><img src="/assets/images/SP-Studio.png" alt="UFO" height="300" /></div> */}
           </div>
         </div>

@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../App.css"; // Import your CSS
-import axios from 'axios';
 
-
-let user = undefined;
-
-const Sign_Up = () => {
+const LoginIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
-  
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -35,31 +29,11 @@ const Sign_Up = () => {
     };
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)) {
-      setError("Password must be at least 8 characters long, include letters, numbers, and a special character.");
-      return;
-    }
     setError("");
-
-    try {
-      const response = await axios.post('http://localhost:3000/api/signup', { email, password });
-      const token = response.data.token;
-      // Save the token (typically in localStorage or context)
-      localStorage.setItem('token', token);
-      alert('Login successful');
-    } catch (error) {
-      setError(error.response.data.message);
-    }
-    
-    
-    alert("Signed up successfully!");
+    alert("Logged in successfully!");
   };
-
-
-  
-
 
   return (
     <div style={{ padding: "10px 20px", background: "black", minHeight: "100vh" }}>
@@ -72,7 +46,7 @@ const Sign_Up = () => {
       </div>
 
       <div style={{ display: "flex", flexFlow: "column", padding: "20px", color: "#FFF", marginTop: "30px", alignItems: "center" }}>
-        <div className="dynamic-transform-absolute" style={{ right: '0' }}>
+      <div className="dynamic-transform-absolute" style={{ right: '0' }}>
           <img src="/assets/images/alien spaceships ufo with blue.png" alt="UFO" height="750" />
         </div>
 
@@ -83,8 +57,8 @@ const Sign_Up = () => {
             borderRadius: "12px",
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
             width: "384px",
-            margin: "100px auto 100px 300px",
-            zIndex: 1,
+            margin: "100px auto 100px 300px",// Adjusted margin to move box 
+            zIndex: 1, // Ensure login box is above images
           }}
         >
           <h2
@@ -96,7 +70,7 @@ const Sign_Up = () => {
               color: "#374151",
             }}
           >
-            Sign Up
+            Login
           </h2>
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: "16px" }}>
@@ -156,30 +130,30 @@ const Sign_Up = () => {
                 ":hover": { backgroundColor: "#60a5fa" },
               }}
             >
-              Sign Up
+              Login
             </button>
           </form>
-          <p style={{ textAlign: "center", marginTop: "16px", fontSize: "0.875rem", color: "#374151" }}>
-            Already have an account?{" "}
+          <p style={{ textAlign: "center", marginTop: "16px", fontSize: "0.875rem", color: "#374151", }}>
+            Don't have an account?{" "}
             <Link
-              to="/Login_In"
+              to="/SignUp"
               style={{ color: "#3B82F6", textDecoration: "underline" }}
             >
-              Login
+              Sign Up
             </Link>
           </p>
         </div>
 
         <div className="dynamic-transform-absolute" style={{ right: '0' }}>
-          <img src="/assets/images/home-cta-planet.png" alt="planet" height="200" />
-        </div>
+            <img src="/assets/images/home-cta-planet.png" alt="planet" height="200" />
+          </div>
 
-        <div className="dynamic-transform-absolute" style={{ left: '0' }}>
-          <img src="/assets/images/home-cta-rocket.png" alt="rocket" width="288" />
-        </div>
+          <div className="dynamic-transform-absolute" style={{ left: '0' }}>
+            <img src="/assets/images/home-cta-rocket.png" alt="rocket" width="288" />
+          </div>
       </div>
     </div>
   );
 };
 
-export default Sign_Up;
+export default LoginIn;

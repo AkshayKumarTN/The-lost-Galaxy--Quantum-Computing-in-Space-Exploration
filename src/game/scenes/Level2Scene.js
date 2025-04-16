@@ -1,4 +1,3 @@
-
 import Phaser from 'phaser';
 
 class Level2Scene extends Phaser.Scene {
@@ -18,12 +17,16 @@ class Level2Scene extends Phaser.Scene {
   }
 
   preload() {
+    this.loadAssets();
+    this.load.audio('dialogPop', 'assets/sounds/dialog-pop.mp3');
+  }
+
+  loadAssets() {
     this.load.image('playerShip', 'assets/images/playerShip.png');
     this.load.image('lostShip', 'assets/images/lostShip.png');
     this.load.image('photon', 'assets/images/photon.png');
     this.load.image('filterRect', 'assets/images/filter_rectilinear.png');
     this.load.image('filterDiag', 'assets/images/filter_diagonal.png');
-    this.load.audio('dialogPop', 'assets/sounds/dialog-pop.mp3');
   }
 
   create() {
@@ -268,11 +271,15 @@ class Level2Scene extends Phaser.Scene {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ level: 2, secretKey: secretKey })
+      body: JSON.stringify({ level: 2, key: secretKey })
     })
-      .then(response => response.json())
-      .then(data => console.log('Success:', data))
-      .catch(error => console.error('Error:', error));
+      .then(res => res.json())
+      .then(data => {
+        console.log('Progress saved:', data);
+      })
+      .catch(error => {
+        console.error('Error storing secret key:', error);
+      });
   }
 }
 

@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../App.css"; // Import your CSS
+import axios from 'axios';
 
-const Login_In = () => {
+
+//let user = undefined;
+
+const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -29,11 +35,31 @@ const Login_In = () => {
     };
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)) {
+      setError("Password must be at least 8 characters long, include letters, numbers, and a special character.");
+      return;
+    }
     setError("");
-    alert("Logged in successfully!");
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/signup', { email, password });
+      const token = response.data.token;
+      // Save the token (typically in localStorage or context)
+      localStorage.setItem('token', token);
+      alert('Login successful');
+    } catch (error) {
+      setError(error.response.data.message);
+    }
+    
+    
+    alert("Signed up successfully!");
   };
+
+
+  
+
 
   return (
     <div style={{ padding: "10px 20px", background: "black", minHeight: "100vh" }}>
@@ -46,7 +72,7 @@ const Login_In = () => {
       </div>
 
       <div style={{ display: "flex", flexFlow: "column", padding: "20px", color: "#FFF", marginTop: "30px", alignItems: "center" }}>
-      <div className="dynamic-transform-absolute" style={{ right: '0' }}>
+        <div className="dynamic-transform-absolute" style={{ right: '0' }}>
           <img src="/assets/images/alien spaceships ufo with blue.png" alt="UFO" height="750" />
         </div>
 
@@ -57,8 +83,8 @@ const Login_In = () => {
             borderRadius: "12px",
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
             width: "384px",
-            margin: "100px auto 100px 300px",// Adjusted margin to move box 
-            zIndex: 1, // Ensure login box is above images
+            margin: "100px auto 100px 300px",
+            zIndex: 1,
           }}
         >
           <h2
@@ -70,7 +96,7 @@ const Login_In = () => {
               color: "#374151",
             }}
           >
-            Login
+            Sign Up
           </h2>
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: "16px" }}>
@@ -130,30 +156,30 @@ const Login_In = () => {
                 ":hover": { backgroundColor: "#60a5fa" },
               }}
             >
-              Login
+              Sign Up
             </button>
           </form>
-          <p style={{ textAlign: "center", marginTop: "16px", fontSize: "0.875rem", color: "#374151", }}>
-            Don't have an account?{" "}
+          <p style={{ textAlign: "center", marginTop: "16px", fontSize: "0.875rem", color: "#374151" }}>
+            Already have an account?{" "}
             <Link
-              to="/Sign_Up"
+              to="/LoginIn"
               style={{ color: "#3B82F6", textDecoration: "underline" }}
             >
-              Sign Up
+              Login
             </Link>
           </p>
         </div>
 
         <div className="dynamic-transform-absolute" style={{ right: '0' }}>
-            <img src="/assets/images/home-cta-planet.png" alt="planet" height="200" />
-          </div>
+          <img src="/assets/images/home-cta-planet.png" alt="planet" height="200" />
+        </div>
 
-          <div className="dynamic-transform-absolute" style={{ left: '0' }}>
-            <img src="/assets/images/home-cta-rocket.png" alt="rocket" width="288" />
-          </div>
+        <div className="dynamic-transform-absolute" style={{ left: '0' }}>
+          <img src="/assets/images/home-cta-rocket.png" alt="rocket" width="288" />
+        </div>
       </div>
     </div>
   );
 };
 
-export default Login_In;
+export default SignUp;
