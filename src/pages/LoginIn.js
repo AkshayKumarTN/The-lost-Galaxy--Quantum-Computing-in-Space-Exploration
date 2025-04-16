@@ -38,15 +38,13 @@ const LoginIn = () => {
   return (
     <div style={{ padding: "10px 20px", background: "black", minHeight: "100vh" }}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <img
-          src="/assets/images/The-Lost-Galaxy-Home-icon.png"
-          alt="The Lost Galaxy"
-          height="80"
-        />
+        <Link to="/">
+          <img src="/assets/images/The-Lost-Galaxy-Home-icon.png" alt="The Lost Galaxy" height="80" />
+        </Link>
       </div>
 
       <div style={{ display: "flex", flexFlow: "column", padding: "20px", color: "#FFF", marginTop: "30px", alignItems: "center" }}>
-      <div className="dynamic-transform-absolute" style={{ right: '0' }}>
+        <div className="dynamic-transform-absolute" style={{ right: '0' }}>
           <img src="/assets/images/alien spaceships ufo with blue.png" alt="UFO" height="750" />
         </div>
 
@@ -145,12 +143,12 @@ const LoginIn = () => {
         </div>
 
         <div className="dynamic-transform-absolute" style={{ right: '0' }}>
-            <img src="/assets/images/home-cta-planet.png" alt="planet" height="200" />
-          </div>
+          <img src="/assets/images/home-cta-planet.png" alt="planet" height="200" />
+        </div>
 
-          <div className="dynamic-transform-absolute" style={{ left: '0' }}>
-            <img src="/assets/images/home-cta-rocket.png" alt="rocket" width="288" />
-          </div>
+        <div className="dynamic-transform-absolute" style={{ left: '0' }}>
+          <img src="/assets/images/home-cta-rocket.png" alt="rocket" width="288" />
+        </div>
       </div>
     </div>
   );
