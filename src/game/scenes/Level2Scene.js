@@ -12,6 +12,7 @@ class Level2Scene extends Phaser.Scene {
 
     this.filterHistory = [];
     this.resultHistory = [];
+    this.lostShipFilterHistory = [];
 
     this.selectedFilter = null;
   }
@@ -44,7 +45,7 @@ class Level2Scene extends Phaser.Scene {
       { speaker: 'LostShip', text: 'Quantum what now?' },
       { speaker: 'PlayerShip', text: 'I’ll send photons using random angles. You’ll measure them with filters. If we match, we get secure bits!' },
       { speaker: 'LostShip', text: 'Sounds strange but exciting! Let’s begin.' },
-      { speaker: 'PlayerShip', text: 'Photon sequence generated. Choose your filter to start receiving!' }
+      { speaker: 'LostShip', text: 'Photon sequence generated. Choose your filter to start receiving!' }
     ];
 
     this.updateDialogue = (text, speaker) => {
@@ -142,39 +143,68 @@ class Level2Scene extends Phaser.Scene {
     }
   }
 
+  getRandomFilter() {
+    // Generate a random number between 0 and 1
+    const randomNum = Math.random();
+
+    // If randomNum < 0.5, choose 'rectilinear', else choose 'diagonal'
+    if (randomNum < 0.5) {
+      return 'rectilinear';
+    } else {
+      return 'diagonal';
+    }
+  }
+
   generatePhotonSequence(count) {
     this.photonSequence = [];
     const angles = [0, 90, 45, 135];
     for (let i = 0; i < count; i++) {
       const randomAngle = Phaser.Math.RND.pick(angles);
       this.photonSequence.push(randomAngle);
+      const randomFilter = this.getRandomFilter();
+      this.lostShipFilterHistory.push(randomFilter); // randomFilter could be 'rectilinear' or 'diagonal'
+      // const lostShipfilterImage = this.add.image(this.lostShipFilterHistory.length * 60 + 100, 0, randomFilter === 'rectilinear' ? 'filterRect' : 'filterDiag').setDisplaySize(30, 30);
+      // this.lostShipfilterHistoryContainer.add(lostShipfilterImage);
     }
   }
 
   createFilterButtons() {
+    const centerX = this.cameras.main.width / 2;
     const buttonY = this.cameras.main.height / 2 + 120;
 
-    const rectButton = this.add.text(this.cameras.main.width / 2 - 100, buttonY, 'Rectilinear', {
+    // Rectilinear Button
+    this.rectButton = this.add.text(0, 0, 'Rectilinear', {
       fontSize: '22px',
-      fill: '#0f0',
-      backgroundColor: '#000',
-      padding: { x: 10, y: 5 }
+      fontFamily: 'Arial',
+      backgroundColor: '#333',
+      color: '#ffffff',
+      padding: { x: 20, y: 10 },
+      align: 'center',
+      fixedWidth: 150
     })
-      .setInteractive()
+      .setOrigin(0.5)
+      .setPosition(centerX - 100, buttonY)
+      .setInteractive({ useHandCursor: true })
       .on('pointerdown', () => this.selectFilter('rectilinear'))
-      .on('pointerover', () => rectButton.setStyle({ fill: '#ff0' }))
-      .on('pointerout', () => rectButton.setStyle({ fill: '#0f0' }));
+      .on('pointerover', () => this.rectButton.setStyle({ backgroundColor: '#555' }))
+      .on('pointerout', () => this.rectButton.setStyle({ backgroundColor: '#333' }));
 
-    const diagButton = this.add.text(this.cameras.main.width / 2 + 100, buttonY, 'Diagonal', {
+    // Diagonal Button
+    this.diagButton = this.add.text(0, 0, 'Diagonal', {
       fontSize: '22px',
-      fill: '#00f',
-      backgroundColor: '#000',
-      padding: { x: 10, y: 5 }
+      fontFamily: 'Arial',
+      backgroundColor: '#333',
+      color: '#ffffff',
+      padding: { x: 20, y: 10 },
+      align: 'center',
+      fixedWidth: 150
     })
-      .setInteractive()
+      .setOrigin(0.5)
+      .setPosition(centerX + 100, buttonY)
+      .setInteractive({ useHandCursor: true })
       .on('pointerdown', () => this.selectFilter('diagonal'))
-      .on('pointerover', () => diagButton.setStyle({ fill: '#ff0' }))
-      .on('pointerout', () => diagButton.setStyle({ fill: '#00f' }));
+      .on('pointerover', () => this.diagButton.setStyle({ backgroundColor: '#555' }))
+      .on('pointerout', () => this.diagButton.setStyle({ backgroundColor: '#333' }));
   }
 
   selectFilter(filter) {
@@ -184,10 +214,18 @@ class Level2Scene extends Phaser.Scene {
   }
 
   displayPhoton() {
+
     if (this.currentPhoton >= this.photonSequence.length) {
       this.finalizeKey();
       return;
     }
+    // Disable buttons while photon is transmitting
+    // this.rectButton.disableInteractive();
+    // this.diagButton.disableInteractive();
+
+    // Hide the buttons while photon is transmitting
+    this.rectButton.setVisible(false);
+    this.diagButton.setVisible(false);
 
     const photonAngle = this.photonSequence[this.currentPhoton];
     const photon = this.add.image(150, this.cameras.main.height / 2, 'photon').setDisplaySize(this.imageSize / 2, this.imageSize / 2).setAngle(photonAngle);
@@ -199,6 +237,14 @@ class Level2Scene extends Phaser.Scene {
       onComplete: () => {
         this.measurePhoton(this.selectedFilter, photonAngle);
         photon.destroy();
+        // Re-enable buttons if there are more photons to measure
+        if (this.currentPhoton < this.photonSequence.length) {
+          // this.rectButton.setInteractive({ useHandCursor: true });
+          // this.diagButton.setInteractive({ useHandCursor: true });
+
+          this.rectButton.setVisible(true);
+          this.diagButton.setVisible(true);
+        }
       }
     });
   }
@@ -214,29 +260,75 @@ class Level2Scene extends Phaser.Scene {
     if (this.currentPhoton < this.photonSequence.length) {
       this.selectedFilter = null;
     } else {
-      this.finalizeKey();
+      // this.finalizeKey();
+      this.centerHistoryOnScreen();
+
     }
   }
+  centerHistoryOnScreen() {
+    const centerX = this.cameras.main.width / 2;
+    const centerY = this.cameras.main.height / 2;
 
+    // Calculate the height and width of the history container
+    const containerWidth = this.historyContainer.getBounds().width;
+    const containerHeight = this.historyContainer.getBounds().height;
+
+    // Center the container both horizontally and vertically
+    this.historyContainer.x = centerX - containerWidth / 2;
+    this.historyContainer.y = centerY - containerHeight / 2;
+  }
   createHistoryLists() {
     const listY = this.cameras.main.height / 2 + 270;
-    this.add.text(50, listY, 'Selected Filters:', { fontSize: '22px', fill: '#ffffff' });
-    this.add.text(50, listY + 50, 'Results:', { fontSize: '22px', fill: '#ffffff' });
-    this.filterHistoryContainer = this.add.container(200, listY);
-    this.resultHistoryContainer = this.add.container(200, listY + 50);
+
+    // Create text elements
+    const selectedFiltersText = this.add.text(0, 0, 'Selected Filters:', { fontSize: '22px', fill: '#ffffff' });
+    const resultsText = this.add.text(0, 50, 'Results:', { fontSize: '22px', fill: '#ffffff' });
+    const filtersText = this.add.text(0, 100, 'Filters:', { fontSize: '22px', fill: '#ffffff' });
+
+    // Create containers for dynamic content
+    this.filterHistoryContainer = this.add.container(200, 0);
+    this.resultHistoryContainer = this.add.container(200, 50);
+    this.lostShipfilterHistoryContainer = this.add.container(300, 100);
+
+    // Group everything into one main container
+    this.historyContainer = this.add.container(50, listY, [
+      selectedFiltersText,
+      resultsText,
+      filtersText,
+      this.filterHistoryContainer,
+      this.resultHistoryContainer,
+      this.lostShipfilterHistoryContainer
+    ]);
   }
 
   updateHistoryList(filter, result) {
-    const filterImage = this.add.image(this.filterHistory.length * 60 + 100, 0, filter === 'rectilinear' ? 'filterRect' : 'filterDiag').setDisplaySize(30, 30);
+    const index = this.filterHistory.length; // Get current index BEFORE pushing
+
+    const xPos = index * 60;
+
+    const filterImage = this.add.image(xPos + 100, 0, filter === 'rectilinear' ? 'filterRect' : 'filterDiag').setDisplaySize(30, 30);
     this.filterHistoryContainer.add(filterImage);
     this.filterHistory.push(filter);
 
-    const resultText = this.add.text(this.resultHistory.length * 60 + 100, 0, result, {
+    const resultText = this.add.text(xPos + 100, 0, result, {
       fontSize: '22px',
       fill: result === '1' ? '#0f0' : '#f00'
     });
     this.resultHistoryContainer.add(resultText);
     this.resultHistory.push(result);
+
+    const lostFilter = this.lostShipFilterHistory[this.currentPhoton];
+    const lostFilterImage = this.add.image(xPos, 0, lostFilter === 'rectilinear' ? 'filterRect' : 'filterDiag')
+      .setDisplaySize(30, 30);
+    this.lostShipfilterHistoryContainer.add(lostFilterImage);
+    if (this.currentPhoton === this.lostShipFilterHistory.length - 1) {
+      // Remove the two buttons from the screen
+      this.rectButton.destroy();
+      this.diagButton.destroy();
+      if (this.filter) {
+        this.filter.destroy();
+      }
+    }
   }
 
   finalizeKey() {
