@@ -11,7 +11,7 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  
+
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -52,23 +52,21 @@ const SignUp = () => {
     } catch (error) {
       setError(error.response.data.message);
     }
-    
-    
+
+
     alert("Signed up successfully!");
   };
 
 
-  
+
 
 
   return (
     <div style={{ padding: "10px 20px", background: "black", minHeight: "100vh" }}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <img
-          src="/assets/images/The-Lost-Galaxy-Home-icon.png"
-          alt="The Lost Galaxy"
-          height="80"
-        />
+        <Link to="/">
+          <img src="/assets/images/The-Lost-Galaxy-Home-icon.png" alt="The Lost Galaxy" height="80" />
+        </Link>
       </div>
 
       <div style={{ display: "flex", flexFlow: "column", padding: "20px", color: "#FFF", marginTop: "30px", alignItems: "center" }}>
