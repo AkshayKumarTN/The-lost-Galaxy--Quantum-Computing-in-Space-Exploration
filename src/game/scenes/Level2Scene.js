@@ -171,9 +171,9 @@ class Level2Scene extends Phaser.Scene {
   createFilterButtons() {
     const centerX = this.cameras.main.width / 2;
     const buttonY = this.cameras.main.height / 2 + 120;
-
-    // Rectilinear Button
-    this.rectButton = this.add.text(0, 0, 'Rectilinear', {
+  
+    // Common Button Style
+    const buttonStyle = {
       fontSize: '22px',
       fontFamily: 'Arial',
       backgroundColor: '#333',
@@ -181,30 +181,29 @@ class Level2Scene extends Phaser.Scene {
       padding: { x: 20, y: 10 },
       align: 'center',
       fixedWidth: 150
-    })
+    };
+  
+    // Hover and Default Colors
+    const hoverColor = '#555';
+    const defaultColor = '#333';
+  
+    // Create Rectilinear Button
+    this.rectButton = this.add.text(0, 0, 'Rectilinear', buttonStyle)
       .setOrigin(0.5)
       .setPosition(centerX - 100, buttonY)
       .setInteractive({ useHandCursor: true })
       .on('pointerdown', () => this.selectFilter('rectilinear'))
-      .on('pointerover', () => this.rectButton.setStyle({ backgroundColor: '#555' }))
-      .on('pointerout', () => this.rectButton.setStyle({ backgroundColor: '#333' }));
-
-    // Diagonal Button
-    this.diagButton = this.add.text(0, 0, 'Diagonal', {
-      fontSize: '22px',
-      fontFamily: 'Arial',
-      backgroundColor: '#333',
-      color: '#ffffff',
-      padding: { x: 20, y: 10 },
-      align: 'center',
-      fixedWidth: 150
-    })
+      .on('pointerover', () => this.rectButton.setStyle({ backgroundColor: hoverColor }))
+      .on('pointerout', () => this.rectButton.setStyle({ backgroundColor: defaultColor }));
+  
+    // Create Diagonal Button
+    this.diagButton = this.add.text(0, 0, 'Diagonal', buttonStyle)
       .setOrigin(0.5)
       .setPosition(centerX + 100, buttonY)
       .setInteractive({ useHandCursor: true })
       .on('pointerdown', () => this.selectFilter('diagonal'))
-      .on('pointerover', () => this.diagButton.setStyle({ backgroundColor: '#555' }))
-      .on('pointerout', () => this.diagButton.setStyle({ backgroundColor: '#333' }));
+      .on('pointerover', () => this.diagButton.setStyle({ backgroundColor: hoverColor }))
+      .on('pointerout', () => this.diagButton.setStyle({ backgroundColor: defaultColor }));
   }
 
   selectFilter(filter) {
