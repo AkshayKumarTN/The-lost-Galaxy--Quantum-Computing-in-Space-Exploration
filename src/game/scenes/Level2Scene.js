@@ -15,6 +15,19 @@ class Level2Scene extends Phaser.Scene {
     this.lostShipFilterHistory = [];
 
     this.selectedFilter = null;
+    // Common Button Style
+    this.buttonStyle = {
+      fontSize: '22px',
+      fontFamily: 'Arial',
+      backgroundColor: '#333',
+      color: '#ffffff',
+      padding: { x: 20, y: 10 },
+      align: 'center',
+      fixedWidth: 150
+    };
+    // Hover and Default Colors
+    this.hoverColor = '#555';
+    this.defaultColor = '#333';
   }
 
   preload() {
@@ -40,12 +53,30 @@ class Level2Scene extends Phaser.Scene {
     this.dialogSound = this.sound.add('dialogPop');
 
     this.dialogueSequence = [
-      { speaker: 'LostShip', text: 'Hey, Player! I’m lost in space. I need a secure channel to communicate.' },
-      { speaker: 'PlayerShip', text: 'Understood, LostShip. Let’s use quantum key distribution to secure our link.' },
-      { speaker: 'LostShip', text: 'Quantum what now?' },
-      { speaker: 'PlayerShip', text: 'I’ll send photons using random angles. You’ll measure them with filters. If we match, we get secure bits!' },
-      { speaker: 'LostShip', text: 'Sounds strange but exciting! Let’s begin.' },
-      { speaker: 'LostShip', text: 'Photon sequence generated. Choose your filter to start receiving!' }
+
+      { speaker: 'LostShip', text: 'Transmission beep, weak but clear signal incoming.' },
+      { speaker: 'LostShip', text: '[Lost Ship] : $..%$..%#%$...%$%..$%%...$%$%..' },
+      { speaker: 'PlayerShip', text: '[Player Ship] : This is [Player Ship]. Who is this?' },
+      { speaker: 'LostShip', text: '[Lost Ship] : This is [Lost Ship Name]. We’re stranded in deep space.' },
+      { speaker: 'LostShip', text: '[Lost Ship] : We need to establish a secure communication link, and it’s urgent.' },
+      { speaker: 'LostShip', text: '[Lost Ship] : Are you familiar with Quantum Key Distribution?' },
+      { speaker: 'PlayerShip', text: '[Player Ship] : Quantum Key Distribution? ' },
+      { speaker: 'PlayerShip', text: '[Player Ship] : I’ve heard of it, but I don’t fully understand how it works.' },
+      { speaker: 'PlayerShip', text: '[Player Ship] : How can I help?' },
+      { speaker: 'LostShip', text: '[Lost Ship] : Don’t worry! I’ll guide you through it.' },
+      { speaker: 'LostShip', text: '[Lost Ship] : We’ll use the properties of quantum mechanics to securely share a key for encryption.' },
+      { speaker: 'LostShip', text: '[Lost Ship] : I’ll generate photons in entangled pairs and send them to you.' },
+      { speaker: 'LostShip', text: '[Lost Ship] : Your job is to choose a filter to measure each photon, and then we’ll compare our results.' },
+      { speaker: 'PlayerShip', text: '[Player Ship] : I see...' },
+      { speaker: 'PlayerShip', text: '[Player Ship] : So, I choose filters, and then we compare our results to form a shared key?' },
+      { speaker: 'LostShip', text: '[Lost Ship] : Exactly!' },
+      { speaker: 'LostShip', text: '[Lost Ship] : The key is shared only if our filter choices align correctly.' },
+      { speaker: 'LostShip', text: '[Lost Ship] : If they don’t align, the measurement results will be random.' },
+      { speaker: 'PlayerShip', text: '[Player Ship] : Got it.' },
+      { speaker: 'LostShip', text: '[Lost Ship] : Ready?' },
+      { speaker: 'PlayerShip', text: '[Player Ship] : Ready! Let’s get started.' },
+      { speaker: 'LostShip', text: '[Lost Ship] : Alright, select a filter.' },
+
     ];
 
     this.updateDialogue = (text, speaker) => {
@@ -75,7 +106,7 @@ class Level2Scene extends Phaser.Scene {
       this.tweens.add({
         targets: this.dialogText,
         alpha: { from: 0, to: 1 },
-        duration: 200,
+        duration: 300,
         onComplete: () => {
           this.time.addEvent({
             delay: typingSpeed,
@@ -106,6 +137,33 @@ class Level2Scene extends Phaser.Scene {
     this.lostShip = this.add.image(150, this.cameras.main.height / 2, 'lostShip').setDisplaySize(500, 500);
     this.playerShip = this.add.image(this.cameras.main.width - 150, this.cameras.main.height / 2, 'playerShip').setDisplaySize(500, 500);
     this.filter = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'filterRect').setDisplaySize(this.imageSize, this.imageSize);
+    // === ADD THESE MESSAGES ABOVE THE SHIPS ===
+    this.lostShipMessage = this.add.text(this.lostShip.x, this.lostShip.y - 300, "Hi, I'm lost!", {
+      fontSize: '24px',
+      fill: '#ffff00',
+      backgroundColor: '#000000',
+      padding: { left: 10, right: 10, top: 5, bottom: 5 }
+    }).setOrigin(0.5);
+
+    this.playerShipMessage = this.add.text(this.playerShip.x, this.playerShip.y - 300, "Hi, I'm the player!", {
+      fontSize: '24px',
+      fill: '#00ffff',
+      backgroundColor: '#000000',
+      padding: { left: 10, right: 10, top: 5, bottom: 5 }
+    }).setOrigin(0.5);
+
+    // Optional: Fade out the messages after 4 seconds
+    this.time.delayedCall(4000, () => {
+      this.tweens.add({
+        targets: [this.lostShipMessage, this.playerShipMessage],
+        alpha: 0,
+        duration: 1000,
+        onComplete: () => {
+          this.lostShipMessage.destroy();
+          this.playerShipMessage.destroy();
+        }
+      });
+    });
 
     this.generatePhotonSequence(10);
 
@@ -162,51 +220,46 @@ class Level2Scene extends Phaser.Scene {
       const randomAngle = Phaser.Math.RND.pick(angles);
       this.photonSequence.push(randomAngle);
       const randomFilter = this.getRandomFilter();
-      this.lostShipFilterHistory.push(randomFilter); // randomFilter could be 'rectilinear' or 'diagonal'
-      // const lostShipfilterImage = this.add.image(this.lostShipFilterHistory.length * 60 + 100, 0, randomFilter === 'rectilinear' ? 'filterRect' : 'filterDiag').setDisplaySize(30, 30);
-      // this.lostShipfilterHistoryContainer.add(lostShipfilterImage);
+      this.lostShipFilterHistory.push(randomFilter);
     }
   }
 
   createFilterButtons() {
     const centerX = this.cameras.main.width / 2;
     const buttonY = this.cameras.main.height / 2 + 120;
-  
-    // Common Button Style
-    const buttonStyle = {
-      fontSize: '22px',
-      fontFamily: 'Arial',
-      backgroundColor: '#333',
-      color: '#ffffff',
-      padding: { x: 20, y: 10 },
-      align: 'center',
-      fixedWidth: 150
-    };
-  
-    // Hover and Default Colors
-    const hoverColor = '#555';
-    const defaultColor = '#333';
-  
+
+
+
+
+
     // Create Rectilinear Button
-    this.rectButton = this.add.text(0, 0, 'Rectilinear', buttonStyle)
+    this.rectButton = this.add.text(0, 0, 'Rectilinear', this.buttonStyle)
       .setOrigin(0.5)
       .setPosition(centerX - 100, buttonY)
       .setInteractive({ useHandCursor: true })
       .on('pointerdown', () => this.selectFilter('rectilinear'))
-      .on('pointerover', () => this.rectButton.setStyle({ backgroundColor: hoverColor }))
-      .on('pointerout', () => this.rectButton.setStyle({ backgroundColor: defaultColor }));
-  
+      .on('pointerover', () => this.rectButton.setStyle({ backgroundColor: this.hoverColor }))
+      .on('pointerout', () => this.rectButton.setStyle({ backgroundColor: this.defaultColor }));
+
     // Create Diagonal Button
-    this.diagButton = this.add.text(0, 0, 'Diagonal', buttonStyle)
+    this.diagButton = this.add.text(0, 0, 'Diagonal', this.buttonStyle)
       .setOrigin(0.5)
       .setPosition(centerX + 100, buttonY)
       .setInteractive({ useHandCursor: true })
       .on('pointerdown', () => this.selectFilter('diagonal'))
-      .on('pointerover', () => this.diagButton.setStyle({ backgroundColor: hoverColor }))
-      .on('pointerout', () => this.diagButton.setStyle({ backgroundColor: defaultColor }));
+      .on('pointerover', () => this.diagButton.setStyle({ backgroundColor: this.hoverColor }))
+      .on('pointerout', () => this.diagButton.setStyle({ backgroundColor: this.defaultColor }));
   }
 
   selectFilter(filter) {
+    // { speaker: 'LostShip', text: '[Lost Ship] : Alright, I’ll send the first photon now. I’ve randomly chosen a 45-degree filter. Your turn to select a filter.' },
+    this.time.delayedCall(0, () => {
+      this.updateDialogue("[Lost Ship] : Alright, I’ll send the first photon now. I’ve randomly chosen a " + this.lostShipFilterHistory[this.currentPhoton] + "-degree filter.", 'LostShip');
+    });
+
+    this.time.delayedCall(5000, () => {
+      this.clearDialogue();
+    });
     this.selectedFilter = filter;
     this.filter.setTexture(filter === 'rectilinear' ? 'filterRect' : 'filterDiag');
     this.displayPhoton();
@@ -229,6 +282,9 @@ class Level2Scene extends Phaser.Scene {
     const photonAngle = this.photonSequence[this.currentPhoton];
     const photon = this.add.image(150, this.cameras.main.height / 2, 'photon').setDisplaySize(this.imageSize / 2, this.imageSize / 2).setAngle(photonAngle);
 
+
+
+
     this.tweens.add({
       targets: photon,
       x: this.cameras.main.width - 150,
@@ -240,9 +296,15 @@ class Level2Scene extends Phaser.Scene {
         if (this.currentPhoton < this.photonSequence.length) {
           // this.rectButton.setInteractive({ useHandCursor: true });
           // this.diagButton.setInteractive({ useHandCursor: true });
+          this.time.delayedCall(7000, () => {
+            this.clearDialogue();
+          });
+          this.time.delayedCall(8000, () => {
+            this.updateDialogue("[Lost Ship] : Choose your next filter.", 'LostShip');
+            this.rectButton.setVisible(true);
+            this.diagButton.setVisible(true);
+          });
 
-          this.rectButton.setVisible(true);
-          this.diagButton.setVisible(true);
         }
       }
     });
@@ -258,6 +320,11 @@ class Level2Scene extends Phaser.Scene {
     this.currentPhoton++;
     if (this.currentPhoton < this.photonSequence.length) {
       this.selectedFilter = null;
+      // { speaker: 'PlayerShip', text: '[Player Ship] : Got it! Send the next photon.' },
+      this.time.delayedCall(3000, () => {
+        this.clearDialogue();
+        this.updateDialogue("[Player Ship] : Got it! Send the next photon.", 'PlayerShip');
+      });
     } else {
       // this.finalizeKey();
       this.centerHistoryOnScreen();
@@ -275,6 +342,10 @@ class Level2Scene extends Phaser.Scene {
     // Center the container both horizontally and vertically
     this.historyContainer.x = centerX - containerWidth / 2;
     this.historyContainer.y = centerY - containerHeight / 2;
+    this.generateButton.x = centerX - containerWidth / 2 + 100;  // slight right shift
+    // Show checkbox list and title
+    this.checkboxListText.setVisible(true);
+    this.checkboxListContainer.setVisible(true);
   }
   createHistoryLists() {
     const listY = this.cameras.main.height / 2 + 270;
@@ -282,22 +353,100 @@ class Level2Scene extends Phaser.Scene {
     // Create text elements
     const selectedFiltersText = this.add.text(0, 0, 'Selected Filters:', { fontSize: '22px', fill: '#ffffff' });
     const resultsText = this.add.text(0, 50, 'Results:', { fontSize: '22px', fill: '#ffffff' });
-    const filtersText = this.add.text(0, 100, 'Filters:', { fontSize: '22px', fill: '#ffffff' });
+    const filtersText = this.add.text(0, 100, "Lost Ship's Filters:", { fontSize: '22px', fill: '#ffffff' });
+    this.checkboxListText = this.add.text(0, 150, "Select Matching Filters:", { fontSize: '22px', fill: '#ffffff' });
 
     // Create containers for dynamic content
-    this.filterHistoryContainer = this.add.container(200, 0);
-    this.resultHistoryContainer = this.add.container(200, 50);
-    this.lostShipfilterHistoryContainer = this.add.container(300, 100);
+    this.filterHistoryContainer = this.add.container(250, 0);
+    this.resultHistoryContainer = this.add.container(240, 50);
+    this.lostShipfilterHistoryContainer = this.add.container(350, 100);
+    this.checkboxListContainer = this.add.container(220, 150); // NEW container for checkboxes
+
+
+    // Create Generate button
+    this.generateButton = this.add.text(400 + 30, 250, 'Generate', this.buttonStyle)
+      .setOrigin(0.5) // center align
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => this.onGenerateButtonClicked())
+      .on('pointerover', () => this.generateButton.setStyle({ backgroundColor: this.hoverColor }))
+      .on('pointerout', () => this.generateButton.setStyle({ backgroundColor: this.defaultColor }));
 
     // Group everything into one main container
     this.historyContainer = this.add.container(50, listY, [
       selectedFiltersText,
       resultsText,
       filtersText,
+      this.checkboxListText,
       this.filterHistoryContainer,
       this.resultHistoryContainer,
-      this.lostShipfilterHistoryContainer
+      this.lostShipfilterHistoryContainer,
+      this.checkboxListContainer, // Add new checkbox container here
+      this.generateButton
     ]);
+
+    // Hide checkbox list and title initially
+    this.checkboxListText.setVisible(false);
+    this.checkboxListContainer.setVisible(false);
+    this.generateButton.setVisible(false);
+
+    // Initialize checkbox data
+    this.checkBoxList = [];
+
+    // Example filters (replace with your real dynamic filters)
+    this.allFilters = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10'];
+
+    this.createCheckboxListHorizontal(this.allFilters, this.checkboxListContainer);
+  }
+  onGenerateButtonClicked() {
+    // Call your finalizeKey() function here
+    this.finalizeKey();
+  }
+  createCheckboxListHorizontal(filters, container) {
+
+
+    filters.forEach((filter, index) => {
+      const xPos = index * 60;
+
+      const checkbox = this.add.text(xPos + 110, 0, '[ ]', { fontSize: '20px', fill: '#ffffff' })
+        .setInteractive()
+        .on('pointerdown', () => this.toggleCheckbox(checkbox, filter));
+
+      container.add(checkbox);
+      this.checkBoxList.push({ filter, checkbox, isChecked: false });
+    });
+  }
+
+  toggleCheckbox(checkbox, filter) {
+    const checkboxObject = this.checkBoxList.find(item => item.filter === filter);
+    checkboxObject.isChecked = !checkboxObject.isChecked;
+
+    if (checkboxObject.isChecked) {
+      checkboxObject.checkbox.setText('[x]');
+    } else {
+      checkboxObject.checkbox.setText('[ ]');
+    }
+    
+    const checkedList = this.checkBoxList.filter(item => item.isChecked === true);
+    if (checkedList.length >= 2) {  // >= 2 selected to show the button
+      this.generateButton.setVisible(true);
+    } else {
+      this.generateButton.setVisible(false);
+    }
+  }
+
+  generateFilterMatch() {
+    const selectedCheckboxes = this.checkBoxList.filter(item => item.isChecked);
+
+    const matchingFilters = selectedCheckboxes.filter(item =>
+      this.selectedFilters.includes(item.filter) &&
+      this.lostShipFilters.includes(item.filter)
+    );
+
+    if (matchingFilters.length > 0) {
+      alert('Matching filters: ' + matchingFilters.map(item => item.filter).join(', '));
+    } else {
+      alert('No matching filters found.');
+    }
   }
 
   updateHistoryList(filter, result) {
