@@ -1,19 +1,5 @@
 import Phaser from 'phaser';
-
-const panoramaShader = `
-precision mediump float;
-
-uniform sampler2D uMainSampler;
-uniform float uTime;
-uniform vec2 uScroll;
-varying vec2 outTexCoord;
-
-void main() {
-    vec2 uv = outTexCoord;
-    uv.x = mod(uv.x + uScroll.x * uTime, 1.0);
-    gl_FragColor = texture2D(uMainSampler, uv);
-}
-`;
+import PanoramaPipeline from './PanoramaPipeline';
 
 class Level3Scene extends Phaser.Scene {
   constructor() {
@@ -21,6 +7,7 @@ class Level3Scene extends Phaser.Scene {
     this.scrollSpeed = { x: 0 };
     this.isDragging = false;
     this.lastDragPosition = { x: 0 };
+    this.uPerspective = 0.5;
   }
 
   preload() {
@@ -28,24 +15,41 @@ class Level3Scene extends Phaser.Scene {
   }
 
   create() {
-    this.panorama = this.add.image(0, 0, 'panorama').setOrigin(0).setDisplaySize(this.scale.width, this.scale.height);
-
-    const pipeline = this.renderer.addPipeline('PanoramaPipeline', new Phaser.Renderer.WebGL.Pipelines.PostFXPipeline({
-      game: this.game,
-      renderer: this.renderer,
-      fragShader: panoramaShader,
-      uniforms: ['uProjectionMatrix', 'uMainSampler', 'uTime', 'uScroll']
-    }));
-
-    this.pipeline = pipeline;
-    this.pipeline.setFloat1('uTime', 0);
-    this.pipeline.setFloat2('uScroll', 0, 0);
-
-    this.panorama.setPostPipeline(this.pipeline);
-
+    this.panorama = this.add.image(0, 0, 'panorama')
+      .setOrigin(0)
+      .setDisplaySize(this.scale.width, this.scale.height);
+  
+    // Register the custom pipeline
+    this.renderer.pipelines.add('PanoramaPipeline', new PanoramaPipeline(this.game));
+  
+    // Apply the pipeline
+    this.panorama.setPostPipeline('PanoramaPipeline');
+  
+    // Make sure the pipeline is set before accessing its properties
+    this.pipeline = this.panorama.postPipelines[0];
+    if (!this.pipeline) {
+      console.error('Pipeline not initialized properly');
+      return;  // Exit if pipeline is not initialized
+    }
+  
+    // Try to get the slider from the DOM
+    const perspectiveSlider = document.getElementById('perspectiveSlider');
+    if (perspectiveSlider) {
+      this.pipeline.perspective = parseFloat(perspectiveSlider.value); // sync initial
+      perspectiveSlider.addEventListener('input', (event) => {
+        this.uPerspective = parseFloat(event.target.value);
+        if (this.pipeline) {
+          this.pipeline.perspective = this.uPerspective;
+        }
+      });
+    } else {
+      console.warn('Slider not found in DOM: #perspectiveSlider');
+    }
+  
     this.setupInput();
     this.setupBackButton();
   }
+  
 
   setupInput() {
     this.input.on('pointerdown', (pointer) => {
@@ -84,8 +88,8 @@ class Level3Scene extends Phaser.Scene {
     }
 
     if (this.pipeline) {
-      this.pipeline.setFloat1('uTime', time / 1000);
-      this.pipeline.setFloat2('uScroll', this.scrollSpeed.x, 0);
+      this.pipeline.scroll.x = this.scrollSpeed.x;
+      this.pipeline.time = time / 1000;
     }
   }
 }
