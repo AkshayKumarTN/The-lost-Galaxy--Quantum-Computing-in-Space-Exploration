@@ -12,64 +12,55 @@ class MainScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale;
-
-    // Add the background image and center it
     const background = this.add.image(width / 2, height / 2, 'startScreen').setOrigin(0.5);
+    const scale = Math.max(width / background.width, height / background.height);
+    background.setScale(scale).setScrollFactor(0);
 
-    // Scale the image to fit the screen while maintaining aspect ratio
-    const scaleX = width / background.width;
-    const scaleY = height / background.height;
-    background.setScale(Math.min(scaleX, scaleY));
+    // Fullscreen button positioning improvement
+    const fullscreenText = this.add.text(width - 160, 30, 'Fullscreen', {
+      fontSize: '24px',
+      fill: '#ffffff',
+      backgroundColor: '#00000050',
+      padding: { x: 10, y: 5 }
+    })
+    .setOrigin(0.5)
+    .setInteractive()
+    .on('pointerdown', () => {
+      this.scale.toggleFullscreen();
+    });
 
-    // Add "Tap to Start" text at the bottom
+    // Start text animation improvement
     const startText = this.add.text(width / 2, height * 0.85, 'Tap to Start', {
-      fontSize: '32px',
+      fontSize: 'clamp(20px, 4vw, 32px)',
       fill: '#ffffff',
       fontFamily: 'Arial',
+      stroke: '#000',
+      strokeThickness: 2
     }).setOrigin(0.5);
 
-    // Blinking effect
     this.tweens.add({
       targets: startText,
       alpha: { from: 1, to: 0.3 },
-      duration: 1000,
+      duration: 800,
       yoyo: true,
       repeat: -1
     });
 
-    // Click to start dialogue sequence
     this.input.once('pointerdown', () => {
       this.showIntroDialogue();
     });
-
-    // Fullscreen toggle button
-    this.add.text(this.cameras.main.width - 150, 20, 'Fullscreen', {
-      fontSize: '20px',
-      fill: '#fff',
-      backgroundColor: '#000'
-  })
-  .setOrigin(0.5, 0)
-  .setInteractive()
-  .on('pointerdown', () => {
-      if (this.scale.isFullscreen) {
-          this.scale.stopFullscreen();
-      } else {
-          this.scale.startFullscreen();
-      }
-  });
   }
 
   showIntroDialogue() {
     const { width, height } = this.scale;
-    this.children.removeAll(); // Clear previous elements
+    this.children.removeAll();
 
-    // Add astronaut image slightly smaller (90% of full screen)
     const astronaut = this.add.image(width / 2, height / 2, 'astronaut').setOrigin(0.5);
-
-    // Scale astronaut to 90% instead of full screen
-    const scaleX = (width / astronaut.width) * 0.85;
-    const scaleY = (height / astronaut.height) * 0.7;
-    astronaut.setScale(Math.max(scaleX, scaleY));
+    const scale = Math.min(
+      (width * 0.8) / astronaut.width,
+      (height * 0.6) / astronaut.height
+    );
+    astronaut.setScale(scale);
 
     const dialogue = [
       "Captain, we've received a distress signal...",
@@ -80,26 +71,49 @@ class MainScene extends Phaser.Scene {
     ];
 
     let dialogueIndex = 0;
-    const dialogueText = this.add.text(width / 2, height * 0.8, dialogue[dialogueIndex], {
-      fontSize: '28px',
+    const dialogueText = this.add.text(width / 2, height * 0.75, dialogue[dialogueIndex], {
+      fontSize: 'clamp(18px, 3vw, 28px)',
       fill: '#ffffff',
       fontFamily: 'Arial',
       wordWrap: { width: width * 0.8 },
-      align: 'center'
-    }).setOrigin(0.5);
+      align: 'center',
+      lineSpacing: 10,
+      backgroundColor: '#00000070'
+    }).setOrigin(0.5, 0);
 
-    // Function to advance dialogue
+    const nextButton = this.add.text(width / 2, height * 0.9, 'Tap to Continue', {
+      fontSize: 'clamp(16px, 2.5vw, 24px)',
+      fill: '#ffff00',
+      fontStyle: 'italic'
+    }).setOrigin(0.5).setAlpha(0.8);
+
     const nextDialogue = () => {
       dialogueIndex++;
       if (dialogueIndex < dialogue.length) {
         dialogueText.setText(dialogue[dialogueIndex]);
+        this.tweens.killTweensOf(nextButton);
+        nextButton.setAlpha(0.8);
+        this.tweens.add({
+          targets: nextButton,
+          alpha: 0.4,
+          duration: 800,
+          yoyo: true,
+          repeat: -1
+        });
       } else {
-        this.input.off('pointerdown', nextDialogue); // Remove event listener
-        this.scene.start('Level1Scene'); // Go to Level 1
+        this.input.off('pointerdown', nextDialogue);
+        this.scene.start('Level3Scene');
       }
     };
 
-    // Set input event to advance dialogue
+    this.tweens.add({
+      targets: nextButton,
+      alpha: 0.4,
+      duration: 800,
+      yoyo: true,
+      repeat: -1
+    });
+
     this.input.on('pointerdown', nextDialogue);
   }
 }

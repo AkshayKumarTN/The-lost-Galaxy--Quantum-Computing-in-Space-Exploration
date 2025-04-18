@@ -8,19 +8,15 @@
   display: none;
 }
 
-
 .dynamic-transform {
   transform: translate(calc(0% + 8%* var(--mousex-delta)), calc(0% + 8%* var(--mousey-delta) - 14%* var(--scroll-delta)));
   transition: transform 0.1s ease-out;
-  /* Optional: smoother transition */
-
 }
 
 .dynamic-transform-absolute {
   position: absolute;
   transform: translate(calc(0% + 6% * var(--mousex-delta))) translateY(calc(0% - 25% * var(--scroll-delta) + 1% * var(--mousey-delta)));
   transition: transform 0.1s ease-out;
-  /* Optional: smoother transition */
 }
 
 .App {
@@ -56,7 +52,14 @@
 .home-main {
   background: black;
   min-height: 100vh;
+  position: relative; /* Added for game container positioning */
 
+  #game-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
 
   .home-header {
     background: black;
@@ -65,11 +68,6 @@
     top: 0;
     z-index: 1000;
     width: -webkit-fill-available;
-
-    /* background-color: rgba(16, 16, 16, .9);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px); */
-
   }
 
   .home-body {
@@ -79,7 +77,8 @@
     color: rgb(255, 255, 255);
     margin-top: 40px;
     background-image: url('../public/assets/Background/star-bg.webp');
-
+    position: relative;
+    z-index: 2;
   }
 
   .setCourse {
@@ -99,7 +98,6 @@
     animation-name: fadeIn;
     animation-duration: 2s;
     animation-iteration-count: 1;
-
   }
 
   .home-footer {
@@ -120,7 +118,6 @@
         path {
           fill: #FFF;
         }
-
         transition: .2s ease-in-out;
       }
 
@@ -136,14 +133,12 @@
       }
     }
   }
-
 }
 
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
-
   to {
     transform: rotate(360deg);
   }

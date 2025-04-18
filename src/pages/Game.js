@@ -3,40 +3,67 @@ import Phaser from 'phaser';
 import MainScene from '../game/scenes/MainScene';
 import Level1Scene from '../game/scenes/Level1Scene';
 import Level2Scene from '../game/scenes/Level2Scene';
+import Level3Scene from '../game/scenes/Level3Scene';
 
-const config = {
-  type: Phaser.AUTO,
-  width: window.innerWidth, //800
-  height: window.innerHeight, //600,
-  parent: 'game-container',
-  scene: [MainScene, Level1Scene, Level2Scene],  // Include all scenes
-  physics: {
-    default: 'arcade',
-    arcade: { gravity: { y: 0 } }
-  },
-  scale: {
-    mode: Phaser.Scale.RESIZE,  // Adjusts to window size
-    autoCenter: Phaser.Scale.CENTER_BOTH
-  }
-};
-
-export default function Game() {
+const Game = () => {
   useEffect(() => {
-    const game = new Phaser.Game(config);
-
-    // Resize the game when the window resizes
+    let game;
     const handleResize = () => {
-      game.scale.resize(window.innerWidth, window.innerHeight);
+      if (game && !game.destroyed) {
+        game.scale.resize(window.innerWidth, window.innerHeight);
+      }
     };
 
+    const config = {
+      type: Phaser.AUTO,
+      width: window.innerWidth,
+      height: window.innerHeight,
+      parent: 'game-container',
+      scene: [MainScene, Level1Scene, Level2Scene, Level3Scene],
+      physics: {
+        default: 'arcade',
+        arcade: { 
+          gravity: { y: 0 },
+          debug: false
+        }
+      },
+      scale: {
+        mode: Phaser.Scale.RESIZE,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        min: {
+          width: 800,
+          height: 600
+        }
+      },
+      dom: {
+        createContainer: true
+      }
+    };
+
+    game = new Phaser.Game(config);
     window.addEventListener('resize', handleResize);
 
     return () => {
-      game.destroy(true);
+      if (game && !game.destroyed) {
+        game.destroy(true);
+      }
       window.removeEventListener('resize', handleResize);
     };
   }, []);
 
-  return <div id="game-container" style={{ width: '100vw', height: '100vh' }} />;
-}
+  return (
+    <div 
+      id="game-container" 
+      style={{ 
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden',
+        position: 'fixed',
+        top: 0,
+        left: 0
+      }} 
+    />
+  );
+};
 
+export default Game;
