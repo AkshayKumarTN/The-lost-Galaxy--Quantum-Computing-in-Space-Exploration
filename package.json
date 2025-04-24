@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.8.3",
     "bcryptjs": "^3.0.2",
+    "express-session": "^1.18.1",
     "mongodb": "6.13.1",
     "phaser": "^3.88.2",
     "react": "^19.0.0",
@@ -18,7 +19,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "server": "sleep 5 && node src/QuantumSpace_Users/data/users.js",
+    "start": "concurrently \"react-scripts start\" \"npm run server\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -45,6 +47,7 @@
     "@babel/preset-env": "^7.26.9",
     "@testing-library/jest-dom": "^6.6.3",
     "babel-jest": "^29.7.0",
+    "concurrently": "^9.1.2",
     "jest": "^27.5.1",
     "jest-canvas-mock": "^2.5.2",
     "phaser3spectorjs": "^0.0.8"

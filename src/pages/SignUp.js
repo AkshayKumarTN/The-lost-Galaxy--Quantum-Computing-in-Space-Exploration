@@ -54,12 +54,8 @@ const SignUp = () => {
     }
 
 
-    alert("Signed up successfully!");
+    
   };
-
-
-
-
 
   return (
     <div style={{ padding: "10px 20px", background: "black", minHeight: "100vh" }}>

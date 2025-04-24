@@ -4,16 +4,15 @@ import bcrypt from "bcryptjs";
 import cors from 'cors';
 import { users} from '../config/mongoCollections.js'; // Import existing collections
 import { MongoClient } from 'mongodb';
+import session from 'express-session';
 
-const uri = "mongodb://localhost:27017/";
-const dbName = "QuantumComputing_Users";
-const collectionName = "storeUserProgress";
 
 const app = express();
 const saltRounds = 10;
 
 app.use(cors());
 app.use(express.json());
+
 
 // Signup API
 app.post('/api/signup', async (req, res) => {
@@ -117,6 +116,74 @@ app.post('/api/storeProgress', async (req, res) => {
     await client.close();
   }
 });
+
+// Leaderboard API - Fetch leaderboard data
+app.get('/api/leaderboard', async (req, res) => {
+  try {
+    // Assuming users is already the collection from MongoCollections
+    let userCollection = await users();
+    const leaderboard = await userCollection.aggregate([
+      {
+        $project: {
+          username: 1,
+          email: 1,
+          level: { $toInt: "$level" },
+          score: { $toInt: "$score" }
+        }
+      },
+      { $sort: { score: -1, level: -1 } }, // prioritize high score, then level
+      { $limit: 10 }
+    ]).toArray();
+
+    res.json(leaderboard);
+  } catch (err) {
+    console.error("Error fetching leaderboard:", err);
+    res.status(500).json({ message: "Error fetching leaderboard", error: err });
+  }
+});
+
+app.post('/api/signin', async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required.' });
+  }
+  try {
+
+    const userCollection = await users();
+    const user = await userCollection.findOne({ email });
+    
+
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
+    }
+    
+    req.session.userId = user._id.toString();
+    // Successful login
+    res.status(200).json({ 
+      message: 'Login successful',
+      user: {
+        id: user._id.toString(),
+        email: user.email,
+        username: user.username || '', // Add this if you're storing usernames
+        score: user.score || 0,
+        level: user.level || 1
+      }
+    });
+
+
+  } catch (error) {
+    console.error('Signin error:', error);
+    res.status(500).json({ message: 'Internal server error.' });
+  }
+});
+
+
 
 const PORT = 3000;
 app.listen(PORT, () => {
