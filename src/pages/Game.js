@@ -9,7 +9,7 @@ const config = {
   width: window.innerWidth, //800
   height: window.innerHeight, //600,
   parent: 'game-container',
-  scene: [MainScene, Level1Scene, Level2Scene],  // Include all scenes
+  scene: [MainScene, Level1Scene, Level2Scene, Level3Scene],  // Include all scenes
   physics: {
     default: 'arcade',
     arcade: { gravity: { y: 0 } }
