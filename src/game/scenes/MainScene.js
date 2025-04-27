@@ -6,29 +6,43 @@ class MainScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('startScreen', 'assets/images/start-screen.png');
+    // Load the nebula background
+    this.load.image('nebulaBackground', 'assets/images/nebula_space.jpg'); 
     this.load.image('astronaut', 'assets/images/astronaut.png');
   }
 
   create() {
     const { width, height } = this.scale;
 
-    // Add the background image and center it
-    const background = this.add.image(width / 2, height / 2, 'startScreen').setOrigin(0.5);
+    // Add nebula background and center it
+    const background = this.add.image(width / 2, height / 2, 'nebulaBackground').setOrigin(0.5);
 
-    // Scale the image to fit the screen while maintaining aspect ratio
+    // Scale the background to fit the screen, but maintain aspect ratio
     const scaleX = width / background.width;
     const scaleY = height / background.height;
     background.setScale(Math.min(scaleX, scaleY));
 
-    // Add "Tap to Start" text at the bottom
+    // Set camera zoom to fit the entire scene (no zoom-in)
+    this.cameras.main.setZoom(1);  // Default zoom level (1 is 100%)
+
+    // Allow the camera to scroll freely in all directions (up/down/left/right)
+    this.cameras.main.setBounds(0, 0, width * 2, height * 2);  // Expand bounds for free movement
+    this.cameras.main.scrollX = width / 2;  // Start camera at the center
+    this.cameras.main.scrollY = height / 2;
+
+    // Enable drag input for the camera to allow movement
+    this.input.on('pointerdown', (pointer) => {
+      this.startDrag(pointer);
+    });
+
+    // "Tap to Start" text at the bottom
     const startText = this.add.text(width / 2, height * 0.85, 'Tap to Start', {
       fontSize: '32px',
       fill: '#ffffff',
       fontFamily: 'Arial',
     }).setOrigin(0.5);
 
-    // Blinking effect
+    // Blinking effect for "Tap to Start"
     this.tweens.add({
       targets: startText,
       alpha: { from: 1, to: 0.3 },
@@ -37,7 +51,7 @@ class MainScene extends Phaser.Scene {
       repeat: -1
     });
 
-    // Click to start dialogue sequence
+    // Click to start the dialogue sequence
     this.input.once('pointerdown', () => {
       this.showIntroDialogue();
     });
@@ -47,16 +61,43 @@ class MainScene extends Phaser.Scene {
       fontSize: '20px',
       fill: '#fff',
       backgroundColor: '#000'
-  })
-  .setOrigin(0.5, 0)
-  .setInteractive()
-  .on('pointerdown', () => {
+    })
+    .setOrigin(0.5, 0)
+    .setInteractive()
+    .on('pointerdown', () => {
       if (this.scale.isFullscreen) {
-          this.scale.stopFullscreen();
+        this.scale.stopFullscreen();
       } else {
-          this.scale.startFullscreen();
+        this.scale.startFullscreen();
       }
-  });
+    });
+  }
+
+  startDrag(pointer) {
+    // Store the starting position of the pointer for dragging
+    this.startX = pointer.x;
+    this.startY = pointer.y;
+
+    // Start dragging (update camera position based on pointer movement)
+    this.input.on('pointermove', (pointer) => {
+      if (pointer.isDown) {
+        const deltaX = pointer.x - this.startX;
+        const deltaY = pointer.y - this.startY;
+        
+        // Update camera position
+        this.cameras.main.scrollX -= deltaX;
+        this.cameras.main.scrollY -= deltaY;
+
+        // Update starting position for next drag movement
+        this.startX = pointer.x;
+        this.startY = pointer.y;
+      }
+    });
+
+    // Stop dragging when pointer is released
+    this.input.on('pointerup', () => {
+      this.input.off('pointermove');
+    });
   }
 
   showIntroDialogue() {
@@ -66,10 +107,10 @@ class MainScene extends Phaser.Scene {
     // Add astronaut image slightly smaller (90% of full screen)
     const astronaut = this.add.image(width / 2, height / 2, 'astronaut').setOrigin(0.5);
 
-    // Scale astronaut to 90% instead of full screen
+    // Scale astronaut to fit within screen
     const scaleX = (width / astronaut.width) * 0.85;
     const scaleY = (height / astronaut.height) * 0.7;
-    astronaut.setScale(Math.max(scaleX, scaleY));
+    astronaut.setScale(Math.min(scaleX, scaleY)); // Use Math.min for maintaining aspect ratio
 
     const dialogue = [
       "Captain, we've received a distress signal...",
@@ -95,7 +136,15 @@ class MainScene extends Phaser.Scene {
         dialogueText.setText(dialogue[dialogueIndex]);
       } else {
         this.input.off('pointerdown', nextDialogue); // Remove event listener
-        this.scene.start('Level1Scene'); // Go to Level 1
+        // Fade-out effect before starting Level 3
+        this.tweens.add({
+          targets: dialogueText,
+          alpha: 0,
+          duration: 500,
+          onComplete: () => {
+            this.scene.start('Level4Scene'); // Start Level 3 scene after fading out
+          }
+        });
       }
     };
 
