@@ -1,10 +1,10 @@
 import Phaser from 'phaser';
 
-class Level3Scene extends Phaser.Scene {
+class Level5Scene extends Phaser.Scene {
   constructor() {
-    super({ key: 'Level3Scene' });
+    super({ key: 'Level5Scene' });
     
-    // 复用Level2的按钮样式
+    // 按钮样式配置
     this.buttonStyle = {
       fontSize: '22px',
       fontFamily: 'Arial',
@@ -21,63 +21,96 @@ class Level3Scene extends Phaser.Scene {
     this.targetAngle = 60; // 目标角度60度
     this.currentAngle = 0;
     this.matchThreshold = 15; // 允许误差±15度
+
+    // 按钮引用
+    this.buttons = [];
   }
 
   preload() {
-    // 完全复用Level2的素材
+    // 加载素材（已移除音频加载）
     this.load.image('playerShip', 'assets/images/playerShip.png');
     this.load.image('lostShip', 'assets/images/lostShip.png');
     this.load.image('filterRect', 'assets/images/filter_rectilinear.png');
+    this.load.image('space_bg', 'assets/images/space_bg.png');
   }
 
   create() {
-    // 复用Level2的背景和飞船
+    // 背景和飞船
     this.add.image(400, 300, 'space_bg');
     this.lostShip = this.add.image(150, 300, 'lostShip').setDisplaySize(500, 500);
     this.playerShip = this.add.image(650, 300, 'playerShip').setDisplaySize(500, 500);
     
-    // 标题（修改为Level3）
+    // 标题
     this.add.text(400, 50, 'Level 3: Quantum Polarization Puzzle', { 
       fontSize: '32px', 
       fill: '#ffffff' 
     }).setOrigin(0.5);
 
-    // 使用filterRect作为偏振滤镜
+    // 偏振滤镜
     this.polarizer = this.add.image(400, 300, 'filterRect')
       .setDisplaySize(150, 150)
       .setInteractive()
       .setAngle(this.currentAngle);
 
-    // 旋转控制按钮（复用Level2样式）
-    this.add.text(300, 450, '← Rotate -15°', this.buttonStyle)
-      .setInteractive()
-      .on('pointerdown', () => this.rotatePolarizer(-15))
-      .on('pointerover', (btn) => btn.setStyle({ backgroundColor: this.hoverColor }))
-      .on('pointerout', (btn) => btn.setStyle({ backgroundColor: this.defaultColor }));
+    // 旋转控制按钮
+    const rotateLeftBtn = this.createButton(
+      300, 450, 
+      '← Rotate -15°', 
+      () => this.rotatePolarizer(-15)
+    );
 
-    this.add.text(500, 450, 'Rotate +15° →', this.buttonStyle)
-      .setInteractive()
-      .on('pointerdown', () => this.rotatePolarizer(15))
-      .on('pointerover', (btn) => btn.setStyle({ backgroundColor: this.hoverColor }))
-      .on('pointerout', (btn) => btn.setStyle({ backgroundColor: this.defaultColor }));
+    const rotateRightBtn = this.createButton(
+      500, 450, 
+      'Rotate +15° →', 
+      () => this.rotatePolarizer(15)
+    );
 
-    // 验证按钮
-    this.add.text(400, 520, 'CHECK MATCH', {
+    // 验证按钮（特殊样式）
+    const checkBtn = this.add.text(400, 520, 'CHECK MATCH', {
       ...this.buttonStyle,
       backgroundColor: '#1a237e'
     })
       .setInteractive()
-      .on('pointerdown', this.checkMatch.bind(this));
+      .on('pointerdown', this.checkMatch.bind(this))
+      .on('pointerover', () => {
+        checkBtn.setStyle({ backgroundColor: this.hoverColor });
+      })
+      .on('pointerout', () => {
+        checkBtn.setStyle({ backgroundColor: '#1a237e' });
+      });
+    this.buttons.push(checkBtn);
 
-    // 返回按钮（与Level2一致）
-    this.add.text(400, 580, 'Back to Level 2', {
+    // 返回按钮
+    const backBtn = this.add.text(400, 580, 'Back to Level 2', {
       fontSize: '24px',
       fill: '#f00',
       backgroundColor: '#000',
       padding: { x: 20, y: 10 }
     })
       .setInteractive()
-      .on('pointerdown', () => this.scene.start('Level2Scene'));
+      .on('pointerdown', () => this.scene.start('Level2Scene'))
+      .on('pointerover', () => {
+        backBtn.setStyle({ fill: '#ff5555' });
+      })
+      .on('pointerout', () => {
+        backBtn.setStyle({ fill: '#f00' });
+      });
+  }
+
+  // 创建可复用按钮的方法
+  createButton(x, y, text, onClick) {
+    const btn = this.add.text(x, y, text, this.buttonStyle)
+      .setInteractive()
+      .on('pointerdown', onClick)
+      .on('pointerover', () => {
+        btn.setStyle({ backgroundColor: this.hoverColor });
+      })
+      .on('pointerout', () => {
+        btn.setStyle({ backgroundColor: this.defaultColor });
+      });
+    
+    this.buttons.push(btn);
+    return btn;
   }
 
   rotatePolarizer(degrees) {
@@ -99,11 +132,17 @@ class Level3Scene extends Phaser.Scene {
   }
 
   checkMatch() {
+    // 禁用所有按钮防止重复点击
+    this.buttons.forEach(btn => {
+      btn.disableInteractive();
+      btn.setStyle({ fill: '#888' });
+    });
+
     const angleDiff = Math.abs(this.currentAngle - this.targetAngle);
     const normalizedDiff = Math.min(angleDiff, 360 - angleDiff);
     
     if (normalizedDiff <= this.matchThreshold) {
-      // 成功效果：复用Level2的闪光动画
+      // 成功效果
       this.tweens.add({
         targets: [this.polarizer, this.lostShip],
         alpha: 0.5,
@@ -116,6 +155,14 @@ class Level3Scene extends Phaser.Scene {
             fill: '#0f0',
             align: 'center'
           }).setOrigin(0.5);
+          
+          // 3秒后解锁按钮
+          this.time.delayedCall(3000, () => {
+            this.buttons.forEach(btn => {
+              btn.setInteractive();
+              btn.setStyle({ fill: '#ffffff' });
+            });
+          });
         }
       });
     } else {
@@ -123,9 +170,13 @@ class Level3Scene extends Phaser.Scene {
       this.polarizer.setTint(0xff0000);
       this.time.delayedCall(500, () => {
         this.polarizer.clearTint();
+        this.buttons.forEach(btn => {
+          btn.setInteractive();
+          btn.setStyle({ fill: '#ffffff' });
+        });
       });
     }
   }
 }
 
-export default Level3Scene;
+export default Level5Scene;
