@@ -3,29 +3,28 @@ import Phaser from 'phaser';
 import MainScene from '../game/scenes/MainScene';
 import Level1Scene from '../game/scenes/Level1Scene';
 import Level2Scene from '../game/scenes/Level2Scene';
-import Level4Scene from '../game/scenes/Level4Scene';
+import Level4Scene from '../game/scenes/Level4Scene'; // Make sure Level4Scene exists
 
 const config = {
   type: Phaser.AUTO,
   width: window.innerWidth,
   height: window.innerHeight,
   parent: 'game-container',
-  scene: [MainScene, Level1Scene, Level2Scene, Level4Scene],  // Include all scenes
+  scene: [MainScene, Level1Scene, Level2Scene, Level4Scene],
   physics: {
     default: 'arcade',
-    arcade: { gravity: { y: 0 } }
+    arcade: { gravity: { y: 0 } },
   },
   scale: {
-    mode: Phaser.Scale.RESIZE,  // Adjusts to window size
-    autoCenter: Phaser.Scale.CENTER_BOTH
-  }
+    mode: Phaser.Scale.RESIZE,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+  },
 };
 
 export default function Game() {
   useEffect(() => {
     const game = new Phaser.Game(config);
 
-    // Resize the game when the window resizes
     const handleResize = () => {
       game.scale.resize(window.innerWidth, window.innerHeight);
     };

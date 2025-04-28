@@ -3,17 +3,24 @@ import Phaser from 'phaser';
 class Level4Scene extends Phaser.Scene {
     constructor() {
         super({ key: 'Level4Scene' });
+
         this.keysCollected = 0;
         this.keyLocations = {
             2: { x: 250, y: 180 },
             3: { x: 600, y: 400 },
             5: { x: 150, y: 350 },
             7: { x: 700, y: 200 },
-            8: { x: 400, y: 500 },
-            9: { x: 550, y: 300 }
+            8: { x: 400, y: 500 }
         };
-        this.totalKeys = Object.keys(this.keyLocations).length; // ✅ calculate the total number of keys dynamically
+        this.totalKeys = Object.keys(this.keyLocations).length;
         this.foundKeys = new Set();
+        this.redKeyLocations = [
+            { x: 300, y: 250 },
+            { x: 550, y: 450 },
+            { x: 650, y: 150 }
+        ];
+        this.alarmSound = null; // To hold the alarm sound instance
+        this.isAlarmActive = false; // To track if the alarm is playing
     }
 
     preload() {
@@ -25,13 +32,18 @@ class Level4Scene extends Phaser.Scene {
         this.load.image('star_bg1', 'assets/nebula/vast_star_field1.jpg');
         this.load.image('star_bg2', 'assets/nebula/vast_star_field2.jpg');
         this.load.image('star_bg3', 'assets/nebula/vast_star_field3.jpg');
-
-        this.load.image('key', 'assets/key.png'); // ✅ Correct key image path
-        this.load.video('end_video', 'assets/videos/end_video.mp4', 'loadeddata', false, true);
+        this.load.image('key', 'assets/key.png');
+        this.load.image('red_key', 'assets/red_key.png');
+        this.load.audio('space_sound', 'assets/space_sound.mp3');
+        this.load.audio('granted', 'assets/granted.mp3');
+        this.load.audio('alarm', 'assets/alarm.mp3'); // Loading the alarm sound
+        this.load.audio('start_up', 'assets/start_up.mp3'); // Loading the start_up sound
     }
 
     create() {
         this.setupGame();
+        this.sound.add('space_sound').play({ loop: true }); // Loop space sound
+        this.alarmSound = this.sound.add('alarm'); // Initialize the alarm sound
     }
 
     setupGame() {
@@ -58,99 +70,167 @@ class Level4Scene extends Phaser.Scene {
         const roomWidth = this.scale.width;
         const roomHeight = this.scale.height;
 
+        // Add original and processed images side-by-side
         this.panoContainer.add(
             this.add.image(0, 0, `room${this.currentRoom}-original`)
                 .setOrigin(0)
                 .setDisplaySize(roomWidth, roomHeight)
         );
-
         this.panoContainer.add(
             this.add.image(roomWidth, 0, `room${this.currentRoom}-processed`)
                 .setOrigin(0)
                 .setDisplaySize(roomWidth, roomHeight)
         );
 
-        if (this.keyLocations[this.currentRoom] && !this.foundKeys.has(this.currentRoom)) {
-            const key = this.add.image(
-                this.keyLocations[this.currentRoom].x,
-                this.keyLocations[this.currentRoom].y,
-                'key'
-            )
-            .setInteractive()
-            .setScale(0.3)
-            .on('pointerdown', () => {
-                this.collectKey(this.currentRoom, key);
-            });
-
-            this.tweens.add({
-                targets: key,
-                scale: 0.35,
-                duration: 1000,
-                yoyo: true,
-                repeat: -1
-            });
-        }
+        // Add blue keys (normal keys)
+        this.addKeyToRoom();
+        // Add red keys (special keys)
+        this.addRedKeysToRoom();
 
         this.cameras.main.setBounds(0, 0, roomWidth * 2, roomHeight)
                          .centerOn(roomWidth, roomHeight / 2);
     }
 
-    collectKey(roomNumber, keyObject) {
-        if (this.foundKeys.has(roomNumber)) return;
+    addKeyToRoom() {
+        if (this.keyLocations[this.currentRoom] && !this.foundKeys.has(this.currentRoom)) {
+            const location = this.keyLocations[this.currentRoom];
+            const key = this.add.image(location.x, location.y, 'key')
+                .setInteractive()
+                .setScale(0.1) // Make the key smaller
+                .on('pointerdown', () => this.collectKey(this.currentRoom, key));
 
-        console.log(`Key collected from room: ${roomNumber}`); // ✅ debug info
-        this.foundKeys.add(roomNumber);
-        this.keysCollected++;
+            this.panoContainer.add(key);
 
-        this.tweens.add({
-            targets: keyObject,
-            alpha: 0,
-            scale: 0,
-            duration: 500,
-            onComplete: () => {
-                keyObject.destroy();
-            }
-        });
+            this.tweens.add({
+                targets: key,
+                y: key.y - 10,
+                duration: 800,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+            });
 
-        this.updateKeyDisplay();
-
-        if (this.keysCollected === this.totalKeys) {  // ✅ check against dynamically calculated total keys
-            console.log('All keys collected! 🎉 Playing video...');
-            this.time.delayedCall(500, () => this.playEndingVideo());
+            this.tweens.add({
+                targets: key,
+                angle: { from: -5, to: 5 },
+                duration: 1000,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+            });
         }
     }
 
-    playEndingVideo() {
-        this.panoContainer.setVisible(false);
-        this.background.setVisible(false);
+    addRedKeysToRoom() {
+        this.redKeyLocations.forEach(location => {
+            const redKey = this.add.image(location.x, location.y, 'red_key')
+                .setInteractive()
+                .setScale(0.2) // Same size as before for red keys
+                .on('pointerdown', () => this.activateAlarm(redKey));
 
-        const video = this.add.video(this.scale.width / 2, this.scale.height / 2, 'end_video');
-        video.setDisplaySize(this.scale.width, this.scale.height);
-        video.play(false);
+            this.panoContainer.add(redKey);
 
-        video.on('complete', () => {
-            video.destroy();
-            this.panoContainer.setVisible(true);
-            this.background.setVisible(true);
+            this.tweens.add({
+                targets: redKey,
+                y: redKey.y - 10,
+                duration: 800,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+            });
+
+            this.tweens.add({
+                targets: redKey,
+                angle: { from: -5, to: 5 },
+                duration: 1000,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+            });
+        });
+    }
+
+    activateAlarm(redKey) {
+        if (!this.isAlarmActive) {
+            this.isAlarmActive = true;
+            this.alarmSound.play({ loop: true }); // Start alarm sound when red key is clicked
+        }
+
+        // Optionally hide the red key once clicked
+        this.tweens.add({
+            targets: redKey,
+            scale: 0,
+            alpha: 0,
+            duration: 600,
+            ease: 'Power2',
+            onComplete: () => redKey.destroy()
+        });
+    }
+
+    collectKey(roomNumber, keyObject) {
+        if (this.foundKeys.has(roomNumber)) return; // Prevent collecting keys twice
+
+        this.foundKeys.add(roomNumber);
+        this.keysCollected++;
+
+        // Play the start-up sound when a key is collected
+        this.sound.add('start_up').play();
+
+        // Stop the alarm sound when a blue key is collected
+        if (this.isAlarmActive) {
+            this.isAlarmActive = false;
+            this.alarmSound.stop(); // Stop the alarm sound
+        }
+
+        this.tweens.add({
+            targets: keyObject,
+            scale: 2,
+            alpha: 0,
+            duration: 600,
+            ease: 'Power2',
+            onComplete: () => keyObject.destroy()
+        });
+
+        // Check if all keys are collected
+        if (this.keysCollected === this.totalKeys) {
+            this.playGrantedSound(); // Play granted sound once all keys are found
+            this.showAllKeysFoundMessage();
+        }
+    }
+
+    playGrantedSound() {
+        this.sound.add('granted').play(); // Play the "granted" sound
+    }
+
+    showAllKeysFoundMessage() {
+        const message = this.add.text(
+            this.scale.width / 2, this.scale.height / 2,
+            'All keys were found!',
+            { fontSize: '32px', fill: '#fff', backgroundColor: '#000a' }
+        ).setOrigin(0.5).setScrollFactor(0);
+
+        this.tweens.add({
+            targets: message,
+            alpha: 0,
+            duration: 2000,
+            delay: 1000,
+            onComplete: () => message.destroy()
         });
     }
 
     createUI() {
         const arrowSize = 80;
 
-        this.add.rectangle(
-            this.scale.width - 60,
-            this.scale.height / 2,
-            arrowSize, arrowSize,
-            0x00ff00, 0.5
+        this.rightArrow = this.add.rectangle(
+            this.scale.width - 60, this.scale.height / 2,
+            arrowSize, arrowSize, 0x00ff00, 0.5
         ).setInteractive()
          .setScrollFactor(0)
          .on('pointerdown', () => this.changeRoom(1));
 
-        this.add.rectangle(
+        this.leftArrow = this.add.rectangle(
             60, this.scale.height / 2,
-            arrowSize, arrowSize,
-            0xff0000, 0.5
+            arrowSize, arrowSize, 0xff0000, 0.5
         ).setInteractive()
          .setScrollFactor(0)
          .on('pointerdown', () => this.changeRoom(-1));
@@ -160,29 +240,6 @@ class Level4Scene extends Phaser.Scene {
             `Room ${this.currentRoom}/10`,
             { fontSize: '24px', fill: '#fff', backgroundColor: '#000a' }
         ).setOrigin(0.5).setScrollFactor(0);
-
-        this.keyDisplay = this.add.container(20, 20);
-        this.updateKeyDisplay();
-    }
-
-    updateKeyDisplay() {
-        this.keyDisplay.removeAll();
-
-        this.keyDisplay.add(
-            this.add.text(0, 0, 'Keys Found:', { fontSize: '18px', fill: '#ff0' })
-        );
-
-        for (let i = 1; i <= this.totalKeys; i++) {  // ✅ loop through the dynamically calculated total keys
-            const icon = this.add.image(120 + (i * 40), 15, 'key')
-                .setScale(0.2)
-                .setAlpha(this.keysCollected >= i ? 1 : 0.3);
-            this.keyDisplay.add(icon);
-        }
-
-        this.keyDisplay.add(
-            this.add.text(0, 30, `${this.keysCollected}/${this.totalKeys} keys collected`,  // ✅ updated display
-                { fontSize: '16px', fill: '#fff' })
-        );
     }
 
     setupControls() {
@@ -206,8 +263,9 @@ class Level4Scene extends Phaser.Scene {
 
     changeRoom(delta) {
         this.currentRoom += delta;
-        if (this.currentRoom < 1) this.currentRoom = 10;
         if (this.currentRoom > 10) this.currentRoom = 1;
+        if (this.currentRoom < 1) this.currentRoom = 10;
+
         this.roomText.setText(`Room ${this.currentRoom}/10`);
         this.setupRoom();
     }
