@@ -333,7 +333,7 @@ class Level2Scene extends Phaser.Scene {
     // Center the container both horizontally and vertically
     this.historyContainer.x = centerX - containerWidth / 2;
     this.historyContainer.y = centerY - containerHeight / 2;
-    this.generateButton.x = centerX - containerWidth / 2 + 100;  // slight right shift
+    this.generateButton.x = centerX - containerWidth / 2 - 100;  // slight right shift
     // Show checkbox list and title
     this.checkboxListText.setVisible(true);
     this.checkboxListContainer.setVisible(true);
@@ -548,7 +548,7 @@ class Level2Scene extends Phaser.Scene {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ level: 2, key: secretKey })
+      body: JSON.stringify({ level: 2, secretKey: secretKey })
     })
       .then(res => res.json())
       .then(data => {
