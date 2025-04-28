@@ -167,16 +167,7 @@ class Level2Scene extends Phaser.Scene {
 
     this.generatePhotonSequence(10);
 
-    const backButton = this.add.text(this.cameras.main.width / 2, this.cameras.main.height - 50, 'Back to Level 1', {
-      fontSize: '24px',
-      fill: '#f00',
-      backgroundColor: '#000'
-    })
-      .setOrigin(0.5)
-      .setInteractive()
-      .on('pointerdown', () => this.scene.start('Level1Scene'))
-      .on('pointerover', () => backButton.setStyle({ fill: '#ff0' }))
-      .on('pointerout', () => backButton.setStyle({ fill: '#f00' }));
+    this.createBackButton();
 
     this.createFilterButtons();
     this.createHistoryLists();
@@ -342,7 +333,7 @@ class Level2Scene extends Phaser.Scene {
     // Center the container both horizontally and vertically
     this.historyContainer.x = centerX - containerWidth / 2;
     this.historyContainer.y = centerY - containerHeight / 2;
-    this.generateButton.x = centerX - containerWidth / 2 + 100;  // slight right shift
+    this.generateButton.x = centerX - containerWidth / 2 - 100;  // slight right shift
     // Show checkbox list and title
     this.checkboxListText.setVisible(true);
     this.checkboxListContainer.setVisible(true);
@@ -425,7 +416,7 @@ class Level2Scene extends Phaser.Scene {
     } else {
       checkboxObject.checkbox.setText('[ ]');
     }
-    
+
     const checkedList = this.checkBoxList.filter(item => item.isChecked === true);
     if (checkedList.length >= 2) {  // >= 2 selected to show the button
       this.generateButton.setVisible(true);
@@ -480,6 +471,50 @@ class Level2Scene extends Phaser.Scene {
   }
 
   finalizeKey() {
+
+
+    // Loop through the selected checkboxes
+    let newSecretKey = '';
+    let mismatchFound = false; // Track if a mismatch happens
+
+    // Loop through the selected checkboxes
+    this.checkBoxList.forEach((checkboxItem, index) => {
+      if (checkboxItem.isChecked) {
+        // Check corresponding filterHistory and lostShipFilterHistory
+        const filterChild = this.filterHistoryContainer.getAt(index);
+        const lostFilterChild = this.lostShipfilterHistoryContainer.getAt(index);
+
+        // Check if both exist and match (you might compare texture keys if they are images)
+        if (filterChild && lostFilterChild && filterChild.texture.key === lostFilterChild.texture.key) {
+          const resultChild = this.resultHistoryContainer.getAt(index);
+          if (resultChild && resultChild.text) {
+            newSecretKey += resultChild.text; // Append result to secret key
+          }
+        }
+        else {
+          mismatchFound = true; // Set mismatch flag
+        }
+      }
+    });
+
+    if (mismatchFound) {
+      // Clear all checkboxes
+      this.checkBoxList.forEach(checkboxItem => {
+        checkboxItem.isChecked = false;
+        if (checkboxItem.checkbox) {
+          checkboxItem.checkbox.setText('[ ]');
+        }
+      });
+
+      this.updateDialogue("Filters don't match. Please try again.", 'LostShip');
+
+      return; // Exit early
+    }
+
+    // Update the secretKey
+    this.secretKey = newSecretKey;
+
+
     const keyBoxWidth = 700;
     const keyBoxHeight = 160;
     const keyBoxX = this.cameras.main.width / 2;
@@ -500,6 +535,8 @@ class Level2Scene extends Phaser.Scene {
 
     this.updateDialogue("Photon transmission complete. Secret key generated and stored in the database.", true);
 
+    this.createNextLevelButton();
+
     this.storeSecretKeyInDatabase(this.secretKey);
   }
 
@@ -511,7 +548,7 @@ class Level2Scene extends Phaser.Scene {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ level: 2, key: secretKey })
+      body: JSON.stringify({ level: 2, secretKey: secretKey })
     })
       .then(res => res.json())
       .then(data => {
@@ -521,6 +558,123 @@ class Level2Scene extends Phaser.Scene {
         console.error('Error storing secret key:', error);
       });
   }
+
+  createNextLevelButton() {
+    const centerX = this.cameras.main.width / 2;
+    const backButtonY = this.cameras.main.height - 50; // Y position of the Back button
+
+    // Create a background rectangle for solid button feel
+    const buttonWidth = 200;
+    const buttonHeight = 50;
+    const buttonY = backButtonY - 100;
+
+    // Green background rectangle
+    const nextLevelBackground = this.add.rectangle(centerX, buttonY + buttonHeight / 2, buttonWidth, buttonHeight, 0x00aa00)
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true });
+
+    // Text on top of the rectangle
+    const nextLevelButton = this.add.text(centerX, buttonY + buttonHeight / 2, 'Next Level', {
+      fontSize: '20px',
+      color: '#ffffff', // White text
+      fontFamily: 'Arial',
+      fontStyle: 'bold'
+    })
+      .setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+    // Group them together for interaction
+    nextLevelBackground.on('pointerover', () => {
+      nextLevelBackground.setFillStyle(0x00ff00); // Lighter green on hover
+    });
+
+    nextLevelBackground.on('pointerout', () => {
+      nextLevelBackground.setFillStyle(0x00aa00); // Original green
+    });
+
+    nextLevelBackground.on('pointerdown', () => {
+      this.scene.start('Level3Scene'); // Load the next level
+    });
+
+    nextLevelButton.on('pointerdown', () => {
+      this.scene.start('Level3Scene');
+    });
+
+    nextLevelButton.on('pointerover', () => {
+      nextLevelBackground.setFillStyle(0x00ff00);
+    });
+
+    nextLevelButton.on('pointerout', () => {
+      nextLevelBackground.setFillStyle(0x00aa00);
+    });
+  }
+  createBackButton() {
+    const centerX = this.cameras.main.width / 2;
+    const backButtonY = this.cameras.main.height - 50;
+  
+    const buttonWidth = 250;
+    const buttonHeight = 50;
+  
+    // Create background rectangle
+    const backButtonBackground = this.add.rectangle(centerX, backButtonY, buttonWidth, buttonHeight, 0x0C8CFE)
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true }); // Cursor pointer
+  
+    // Create button text
+    const backButton = this.add.text(centerX, backButtonY, 'Back to Level 1', {
+      fontSize: '22px',
+      color: '#ffffff',
+      fontFamily: 'Arial',
+      fontStyle: 'bold'
+    })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true });
+  
+    // Hover and click effects
+    backButtonBackground.on('pointerover', () => {
+      backButtonBackground.setFillStyle(0x47A8FF); // Light blue on hover
+    });
+  
+    backButtonBackground.on('pointerout', () => {
+      backButtonBackground.setFillStyle(0x0C8CFE); // Strong blue normal
+    });
+  
+    backButtonBackground.on('pointerdown', () => {
+      this.scene.start('Level1Scene');
+    });
+  
+    backButton.on('pointerover', () => {
+      backButtonBackground.setFillStyle(0x47A8FF);
+    });
+  
+    backButton.on('pointerout', () => {
+      backButtonBackground.setFillStyle(0x0C8CFE);
+    });
+  
+    backButton.on('pointerdown', () => {
+      this.scene.start('Level1Scene');
+    });
+  }
+  
+  
+
+  // createNextLevelButton() {
+  //   const centerX = this.cameras.main.width / 2;
+  //   const backButtonY = this.cameras.main.height - 50; // Since you placed Back button here
+
+  //   const nextLevelButton = this.add.text(centerX, backButtonY - 70, 'Next Level', {
+  //     fontSize: '24px',
+  //     fill: '#0f0', // Green color for Next Level
+  //     backgroundColor: '#000'
+  //   })
+  //     .setOrigin(0.5)
+  //     .setInteractive()
+  //     .on('pointerdown', () => this.scene.start('Level1Scene')) // 👉 Your next scene here
+  //     // .on('pointerdown', () => alert('Next Level loading...')) // 👉 Alert on click
+  //     .on('pointerover', () => nextLevelButton.setStyle({ fill: '#0ff' })) // Hover effect
+  //     .on('pointerout', () => nextLevelButton.setStyle({ fill: '#0f0' })); // Back to green
+  // }
+
+
 }
 
 export default Level2Scene;
