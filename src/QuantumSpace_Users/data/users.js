@@ -10,9 +10,17 @@ import session from 'express-session';
 const app = express();
 const saltRounds = 10;
 
-app.use(cors());
+app.use(cors({origin: 'http://localhost:3000',
+  credentials: true}));
+  
 app.use(express.json());
 
+app.use(session({
+  name: 'AuthenticationState',
+  secret: 'some secret string!',
+  resave: false,
+  saveUninitialized: false
+}));
 
 // Signup API
 app.post('/api/signup', async (req, res) => {
@@ -31,7 +39,7 @@ app.post('/api/signup', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const newUser = { email, password: hashedPassword };
+    const newUser = { email, password: hashedPassword, score: 0, level: 0 };
 
     const result = await userCollection.insertOne(newUser);
     res.status(201).json({ message: 'User created successfully', userId: result.insertedId });
@@ -151,7 +159,7 @@ app.post('/api/signin', async (req, res) => {
   try {
 
     const userCollection = await users();
-    const user = await userCollection.findOne({ email });
+    const user = await userCollection.findOne({ email: email });
     
 
     if (!user) {
@@ -163,27 +171,34 @@ app.post('/api/signin', async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password.' });
     }
     
-    req.session.userId = user._id.toString();
+    
+    req.session.user = {
+      email: user.email,
+      score: user.score,
+      level: user.level
+    };
     // Successful login
     res.status(200).json({ 
       message: 'Login successful',
       user: {
         id: user._id.toString(),
         email: user.email,
-        username: user.username || '', // Add this if you're storing usernames
         score: user.score || 0,
         level: user.level || 1
       }
     });
-
-
   } catch (error) {
     console.error('Signin error:', error);
     res.status(500).json({ message: 'Internal server error.' });
   }
 });
-
-
+app.get('/api/currentUser', (req, res) => {
+  if (req.session && req.session.user) {
+    return res.json({ user: req.session.user });
+  } else {
+    return res.json({ user: null });
+  }
+});
 
 const PORT = 3000;
 app.listen(PORT, () => {

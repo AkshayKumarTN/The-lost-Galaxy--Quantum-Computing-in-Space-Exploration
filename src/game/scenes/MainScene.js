@@ -8,9 +8,13 @@ class MainScene extends Phaser.Scene {
   preload() {
     this.load.image('startScreen', 'assets/images/start-screen.png');
     this.load.image('astronaut', 'assets/images/astronaut.png');
+    this.load.audio('background', 'assets/sounds/space-station-247790.mp3');
   }
 
   create() {
+    this.preload();
+    let music = this.sound.add('background', { loop: true, volume: 0.5 });
+    music.play();
     const { width, height } = this.scale;
 
     // Add the background image and center it

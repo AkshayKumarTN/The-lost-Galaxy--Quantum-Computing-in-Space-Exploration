@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, redirect, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../App.css"; 
 import axios from 'axios';
 
@@ -8,7 +8,7 @@ const LoginIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [user, setUser] = useState(null);
+  const [setUser] = useState(null);
 
   const navigate = useNavigate();
 
@@ -43,7 +43,7 @@ const LoginIn = () => {
       const response = await axios.post('http://localhost:3000/api/signin', {
         email,
         password
-      });
+      }, { withCredentials: true });
 
       setUser(response.data.user); // store user in state or context
       setError('');

@@ -15,6 +15,7 @@ class Level1Scene extends Phaser.Scene {
     this.totalFakeShips = 3;
 
     this.instructionText = null;
+    this.timer = null;
   }
 
   preload() {
@@ -118,7 +119,7 @@ class Level1Scene extends Phaser.Scene {
       this.showHitEffect(spot, 0x00ff00); // green
       this.showCaption(`🎯 You've found a ship part! (${this.correctClicks} out of ${this.requiredClicks})`);
 
-      this.revealShipPart(index); // Reveal the ship part on the tile clicked
+      this.revealShipPart(index);
 
       if (this.correctClicks >= this.requiredClicks) {
         this.assembleShip();
@@ -128,8 +129,8 @@ class Level1Scene extends Phaser.Scene {
       spot.setFillStyle(0xff0033, 0.3);
       this.showCaption("💥 That was a decoy ship!");
     } else {
-      this.showHitEffect(spot, 0xffff00); // yellow
-      spot.setFillStyle(0xffff00, 0.3); // Keep it lit yellow
+      this.showHitEffect(spot, 0xffff00);
+      spot.setFillStyle(0xffff00, 0.3); 
       this.showCaption("🌌 Empty space. Quantum state reset!");
     }
   }
