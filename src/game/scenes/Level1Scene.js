@@ -1,4 +1,6 @@
 import Phaser from 'phaser';
+import axios from 'axios';
+
 
 class Level1Scene extends Phaser.Scene {
   constructor() {
@@ -16,6 +18,8 @@ class Level1Scene extends Phaser.Scene {
 
     this.instructionText = null;
     this.timer = null;
+    this.timeElapsed = 0;
+    this.timerEvent = null;
   }
 
   preload() {
@@ -31,6 +35,35 @@ class Level1Scene extends Phaser.Scene {
     this.createClickableSpots();
     this.setRandomShipParts();
     this.registerInput();
+
+    this.timerText = this.add.text(10, 10, `Time: 0s`, {
+      fontSize: '24px',
+      fill: '#fff',
+      fontStyle: 'bold',
+      backgroundColor: 'rgba(30, 30, 60, 0.6)',
+      padding: { x: 10, y: 5 },
+    }).setDepth(5);
+
+
+    this.startTimer();
+  }
+
+  startTimer() {
+    // Set up a repeating event that updates every second
+    this.timerEvent = this.time.addEvent({
+      delay: 1000,
+      callback: this.updateTimer,
+      callbackScope: this,
+      loop: true
+    });
+  }
+
+  updateTimer() {
+    this.timeElapsed++;
+    this.timerText.setText(`Time: ${this.timeElapsed}s`);
+  }
+  endTimer() {
+    this.timerEvent.remove(false); 
   }
 
   addBackground() {
@@ -173,6 +206,18 @@ class Level1Scene extends Phaser.Scene {
     this.shipParts[this.shipPartIndexes.indexOf(index)].setAlpha(1);
   }
 
+  async updateProgress(timeElapsed) {
+    try {
+      const response = await axios.post('http://localhost:5000/api/updateProgress', {
+        level: 1,
+        score: timeElapsed
+      }, { withCredentials: true });
+      console.log("Progress updated successfully:", response.data);
+    } catch (error) {
+      console.error("Error updating progress:", error);
+    }
+  }
+
   assembleShip() {
     this.showCaption("🚀 You've found all the ship parts!\nNow the ship will be revealed!");
 
@@ -200,6 +245,8 @@ class Level1Scene extends Phaser.Scene {
           duration: 600,
           ease: 'Cubic.easeOut',
           onComplete: () => {
+            this.endTimer();
+            this.updateProgress(this.timeElapsed);
             this.scene.start('Level2Scene');
           }
         });

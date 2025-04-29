@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../App.css"; // Import your CSS
 import axios from 'axios';
 
@@ -10,6 +10,7 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
 
 
@@ -44,17 +45,13 @@ const SignUp = () => {
     setError("");
 
     try {
-      const response = await axios.post('http://localhost:3000/api/signup', { email, password });
+      const response = await axios.post('http://localhost:5000/api/signup', { email, password });
       const token = response.data.token;
-      // Save the token (typically in localStorage or context)
       localStorage.setItem('token', token);
-      alert('Login successful');
+      navigate('/');
     } catch (error) {
       setError(error.response.data.message);
     }
-
-
-    
   };
 
   return (

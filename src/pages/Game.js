@@ -6,10 +6,10 @@ import Level2Scene from '../game/scenes/Level2Scene';
 
 const config = {
   type: Phaser.AUTO,
-  width: window.innerWidth, //800
-  height: window.innerHeight, //600,
+  width: window.innerWidth, 
+  height: window.innerHeight,
   parent: 'game-container',
-  scene: [MainScene, Level1Scene, Level2Scene],  // Include all scenes
+  scene: [MainScene, Level1Scene, Level2Scene], 
   physics: {
     default: 'arcade',
     arcade: { gravity: { y: 0 } }

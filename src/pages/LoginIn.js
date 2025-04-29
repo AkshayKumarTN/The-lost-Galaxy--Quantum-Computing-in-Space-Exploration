@@ -8,11 +8,9 @@ const LoginIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [setUser] = useState(null);
+  const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
-
-
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -40,12 +38,12 @@ const LoginIn = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:3000/api/signin', {
+      const response = await axios.post('http://localhost:5000/api/signin', {
         email,
         password
       }, { withCredentials: true });
 
-      setUser(response.data.user); // store user in state or context
+      setUser(response.data.user);
       setError('');
       console.log('Logged in:', response.data.user.email);
       navigate('/');

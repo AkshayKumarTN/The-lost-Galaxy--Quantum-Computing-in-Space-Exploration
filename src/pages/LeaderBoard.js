@@ -9,7 +9,7 @@ const Leaderboard = () => {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/leaderboard');
+        const response = await axios.get('http://localhost:5000/api/leaderboard');
         setLeaderboardData(response.data);
       } catch (err) {
         console.error('Error fetching leaderboard data:', err);
@@ -28,7 +28,7 @@ const Leaderboard = () => {
             <th>Rank</th>
             <th>Email</th>
             <th>Level</th>
-            <th>Timestamp</th>
+            <th>Score</th>
           </tr>
         </thead>
         <tbody>
@@ -37,7 +37,7 @@ const Leaderboard = () => {
               <td>{index + 1}</td>  {/* Display rank */}
               <td>{player.email}</td>  {/* Display player's email */}
               <td>{player.level}</td>  {/* Display player's level */}
-              <td>{new Date(player.timestamp).toLocaleString()}</td>  {/* Display timestamp */}
+              <td>{player.score}</td>  {/* Display timestamp */}
             </tr>
           ))}
         </tbody>

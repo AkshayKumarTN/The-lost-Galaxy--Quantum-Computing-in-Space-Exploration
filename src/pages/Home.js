@@ -7,15 +7,18 @@ import axios from 'axios';
 export default function Home() {
   const [user, setUser] = useState(null); 
   useEffect(() => {
-    axios.get('http://localhost:3000/api/currentUser') 
-      .then((res) => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/currentuser', { withCredentials: true });
         if (res.data.user) {
           setUser(res.data.user);
         }
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error('Error fetching user:', err);
-      });
+      }
+    };
+    fetchUser();
+
 
     const handleMouseMove = (e) => {
       const x = e.clientX / window.innerWidth;

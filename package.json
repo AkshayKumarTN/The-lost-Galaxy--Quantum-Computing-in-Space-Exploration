@@ -11,16 +11,18 @@
     "cors": "^2.8.5",
     "express-session": "^1.18.1",
     "mongodb": "6.13.1",
+    "path": "^0.12.7",
     "phaser": "^3.88.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.2.0",
     "react-router-hash-link": "^2.4.3",
     "react-scripts": "5.0.1",
+    "url": "^0.11.4",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "server": "sleep 5 && node src/QuantumSpace_Users/data/users.js",
+    "server": "sleep 5 && node QuantumSpace_Users/data/users.js",
     "start": "concurrently \"react-scripts start\" \"npm run server\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -45,6 +47,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.26.10",
     "@babel/preset-env": "^7.26.9",
     "@testing-library/jest-dom": "^6.6.3",
     "babel-jest": "^29.7.0",

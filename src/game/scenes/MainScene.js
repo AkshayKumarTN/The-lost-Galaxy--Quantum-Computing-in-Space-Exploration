@@ -12,27 +12,27 @@ class MainScene extends Phaser.Scene {
   }
 
   create() {
-    this.preload();
+
     let music = this.sound.add('background', { loop: true, volume: 0.5 });
     music.play();
     const { width, height } = this.scale;
 
-    // Add the background image and center it
+
     const background = this.add.image(width / 2, height / 2, 'startScreen').setOrigin(0.5);
 
-    // Scale the image to fit the screen while maintaining aspect ratio
+
     const scaleX = width / background.width;
     const scaleY = height / background.height;
     background.setScale(Math.min(scaleX, scaleY));
 
-    // Add "Tap to Start" text at the bottom
+
     const startText = this.add.text(width / 2, height * 0.85, 'Tap to Start', {
       fontSize: '32px',
       fill: '#ffffff',
       fontFamily: 'Arial',
     }).setOrigin(0.5);
 
-    // Blinking effect
+
     this.tweens.add({
       targets: startText,
       alpha: { from: 1, to: 0.3 },
@@ -41,12 +41,10 @@ class MainScene extends Phaser.Scene {
       repeat: -1
     });
 
-    // Click to start dialogue sequence
     this.input.once('pointerdown', () => {
       this.showIntroDialogue();
     });
 
-    // Fullscreen toggle button
     this.add.text(this.cameras.main.width - 150, 20, 'Fullscreen', {
       fontSize: '20px',
       fill: '#fff',
@@ -92,7 +90,7 @@ class MainScene extends Phaser.Scene {
       align: 'center'
     }).setOrigin(0.5);
 
-    // Function to advance dialogue
+
     const nextDialogue = () => {
       dialogueIndex++;
       if (dialogueIndex < dialogue.length) {
@@ -103,7 +101,7 @@ class MainScene extends Phaser.Scene {
       }
     };
 
-    // Set input event to advance dialogue
+
     this.input.on('pointerdown', nextDialogue);
   }
 }
