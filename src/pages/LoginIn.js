@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import "../App.css"; // Import your CSS
+import { Link, useNavigate } from "react-router-dom";
+import "../App.css"; 
+import axios from 'axios';
+
 
 const LoginIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [setUser] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -29,11 +34,28 @@ const LoginIn = () => {
     };
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    alert("Logged in successfully!");
-  };
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/signin', {
+        email,
+        password
+      }, { withCredentials: true });
+
+      setUser(response.data.user);
+      setError('');
+      console.log('Logged in:', response.data.user.email);
+      navigate('/');
+  }catch (err) {
+    if (err.response && err.response.data) {
+      setError(err.response.data.message);
+    } else {
+      setError('An unexpected error occurred.');
+    }
+    console.error(err);
+  }
+};
 
   return (
     <div style={{ padding: "10px 20px", background: "black", minHeight: "100vh" }}>
