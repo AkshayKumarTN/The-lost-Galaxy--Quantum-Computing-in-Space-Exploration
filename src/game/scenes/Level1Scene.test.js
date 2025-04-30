@@ -4,10 +4,14 @@ import Level1Scene from '../scenes/Level1Scene';
 
 jest.mock('phaser3spectorjs', () => {});
 
+jest.mock('axios', () => ({
+  get: jest.fn(() => Promise.resolve({ data: {} })),
+  post: jest.fn(() => Promise.resolve({ data: {} })),
+}));
+
 test('Jest is working', () => {
   expect(true).toBe(true);
 });
-
 
 test('Level1Scene initializes correctly', () => {
   const scene = new Level1Scene();
@@ -17,6 +21,7 @@ test('Level1Scene initializes correctly', () => {
 describe('Level1Scene', () => {
   let scene;
   let mockAdd;
+  let mockTime;
 
   beforeEach(() => {
     mockAdd = {
@@ -29,7 +34,6 @@ describe('Level1Scene', () => {
           })),
         })),
         setDepth: jest.fn().mockReturnThis()
-
       })),
       image: jest.fn(() => ({
         setOrigin: jest.fn().mockReturnThis(),  
@@ -53,14 +57,24 @@ describe('Level1Scene', () => {
         on: jest.fn().mockReturnThis(),
       })),
     };
-  
+
+    mockTime = {
+      addEvent: jest.fn(() => ({
+        remove: jest.fn(),
+      })),
+    };
+
     scene = new Level1Scene();
+
+    // 🛠️ Assign BEFORE create()
     scene.add = mockAdd;
+    scene.time = mockTime;
     scene.input = { on: jest.fn() };
     scene.scale = { width: 800, height: 600 };
     scene.tweens = { add: jest.fn() };
     scene.scannerStatusText = { setText: jest.fn().mockReturnThis(), setFill: jest.fn().mockReturnThis() };
-  
+
+    // ✅ Now safe to call
     scene.create();
   });
 
@@ -78,6 +92,16 @@ describe('Level1Scene', () => {
   
     expect(scene.shipPartIndexes.length).toBe(scene.requiredClicks);
     expect(scene.fakeShipIndices.length).toBe(scene.totalFakeShips);
+  });
+
+  it('should call addEvent for timer when startTimer is invoked', () => {
+    scene.startTimer();
+    expect(mockTime.addEvent).toHaveBeenCalledWith({
+      delay: 1000,
+      callback: scene.updateTimer,
+      callbackScope: scene,
+      loop: true, 
+    });
   });
 
   it('should handle correct spot click and increase correctClicks', () => {
@@ -104,7 +128,6 @@ describe('Level1Scene', () => {
     expect(scene.correctClicks).toBe(1);
     expect(scene.revealShipPart).toHaveBeenCalledWith(0);
   });
-
 
   it('should handle empty space click and trigger reset effect', () => {
     scene.possibleSpots = [{ x: 0, y: 0, getData: () => 5 }];
@@ -154,7 +177,5 @@ describe('Level1Scene', () => {
   
     expect(mockPart.setAlpha).toHaveBeenCalledWith(1);
   });
-  
-
 
 });

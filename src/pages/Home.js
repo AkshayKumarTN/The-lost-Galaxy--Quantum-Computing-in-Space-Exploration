@@ -1,10 +1,25 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 import '../App.css'; // Import the CSS
+import axios from 'axios';
 
 export default function Home() {
+  const [user, setUser] = useState(null); 
   useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/currentuser', { withCredentials: true });
+        if (res.data.user) {
+          setUser(res.data.user);
+        }
+      } catch (err) {
+        console.error('Error fetching user:', err);
+      }
+    };
+    fetchUser();
+
+
     const handleMouseMove = (e) => {
       const x = e.clientX / window.innerWidth;
       const y = e.clientY / window.innerHeight;
@@ -32,6 +47,10 @@ export default function Home() {
       <div className="home-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <img src="/assets/images/The-Lost-Galaxy-Home-icon.png" alt="The Lost Galaxy" height="100" />
         <div style={{ display: 'flex', alignItems: 'center', gap: '1em', fontSize: '20px' }}>
+        {user ? (
+          <span style={{ color: '#8bb2ff' }}>Welcome, {user.email}!</span>
+        ) : (
+          <>
           <Link to="/LoginIn" style={{
             //padding: '.5em 1em',
             color: '#8bb2ff',
@@ -41,6 +60,8 @@ export default function Home() {
             textDecoration: 'none'
           }}>Log in</Link>
           <Link to="/SignUp" style={{ color: '#8bb2ff', textAlign: 'center', fontWeight: '400', border: '1px solid', borderColor: '#8bb2ff', padding: '10px', textDecoration: 'none' }}>Sign up</Link>
+          </>
+        )}
         </div>
       </div>
 

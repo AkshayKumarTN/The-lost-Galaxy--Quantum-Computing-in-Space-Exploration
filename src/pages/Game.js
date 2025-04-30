@@ -7,8 +7,8 @@ import Level3Scene from '../game/scenes/Level3Scene';
 
 const config = {
   type: Phaser.AUTO,
-  width: window.innerWidth, //800
-  height: window.innerHeight, //600,
+  width: window.innerWidth, 
+  height: window.innerHeight,
   parent: 'game-container',
   scene: [MainScene, Level1Scene, Level2Scene, Level3Scene],  // Include all scenes
   physics: {
