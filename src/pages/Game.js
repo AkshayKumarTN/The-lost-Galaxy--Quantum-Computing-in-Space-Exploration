@@ -4,13 +4,15 @@ import MainScene from '../game/scenes/MainScene';
 import Level1Scene from '../game/scenes/Level1Scene';
 import Level2Scene from '../game/scenes/Level2Scene';
 import Level5Scene from '../game/scenes/Level5Scene';
+import Level3Scene from '../game/scenes/Level3Scene';
+import Level4Scene from '../game/scenes/Level4Scene';
 
 const config = {
   type: Phaser.AUTO,
-  width: window.innerWidth, //800
-  height: window.innerHeight, //600,
+  width: window.innerWidth,
+  height: window.innerHeight,
   parent: 'game-container',
-  scene: [MainScene, Level1Scene, Level2Scene, Level5Scene],  // Include all scenes
+  scene: [MainScene, Level1Scene, Level2Scene, Level3Scene, Level4Scene, Level5Scene],  // Include all scenes
   physics: {
     default: 'arcade',
     arcade: { gravity: { y: 0 } }
@@ -40,4 +42,3 @@ export default function Game() {
 
   return <div id="game-container" style={{ width: '100vw', height: '100vh' }} />;
 }
-

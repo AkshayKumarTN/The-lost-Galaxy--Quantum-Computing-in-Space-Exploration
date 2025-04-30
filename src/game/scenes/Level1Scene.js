@@ -1,4 +1,6 @@
 import Phaser from 'phaser';
+import axios from 'axios';
+
 
 class Level1Scene extends Phaser.Scene {
   constructor() {
@@ -15,6 +17,9 @@ class Level1Scene extends Phaser.Scene {
     this.totalFakeShips = 3;
 
     this.instructionText = null;
+    this.timer = null;
+    this.timeElapsed = 0;
+    this.timerEvent = null;
   }
 
   preload() {
@@ -30,6 +35,35 @@ class Level1Scene extends Phaser.Scene {
     this.createClickableSpots();
     this.setRandomShipParts();
     this.registerInput();
+
+    this.timerText = this.add.text(10, 10, `Time: 0s`, {
+      fontSize: '24px',
+      fill: '#fff',
+      fontStyle: 'bold',
+      backgroundColor: 'rgba(30, 30, 60, 0.6)',
+      padding: { x: 10, y: 5 },
+    }).setDepth(5);
+
+
+    this.startTimer();
+  }
+
+  startTimer() {
+    // Set up a repeating event that updates every second
+    this.timerEvent = this.time.addEvent({
+      delay: 1000,
+      callback: this.updateTimer,
+      callbackScope: this,
+      loop: true
+    });
+  }
+
+  updateTimer() {
+    this.timeElapsed++;
+    this.timerText.setText(`Time: ${this.timeElapsed}s`);
+  }
+  endTimer() {
+    this.timerEvent.remove(false); 
   }
 
   addBackground() {
@@ -118,7 +152,7 @@ class Level1Scene extends Phaser.Scene {
       this.showHitEffect(spot, 0x00ff00); // green
       this.showCaption(`🎯 You've found a ship part! (${this.correctClicks} out of ${this.requiredClicks})`);
 
-      this.revealShipPart(index); // Reveal the ship part on the tile clicked
+      this.revealShipPart(index);
 
       if (this.correctClicks >= this.requiredClicks) {
         this.assembleShip();
@@ -128,8 +162,8 @@ class Level1Scene extends Phaser.Scene {
       spot.setFillStyle(0xff0033, 0.3);
       this.showCaption("💥 That was a decoy ship!");
     } else {
-      this.showHitEffect(spot, 0xffff00); // yellow
-      spot.setFillStyle(0xffff00, 0.3); // Keep it lit yellow
+      this.showHitEffect(spot, 0xffff00);
+      spot.setFillStyle(0xffff00, 0.3); 
       this.showCaption("🌌 Empty space. Quantum state reset!");
     }
   }
@@ -172,6 +206,18 @@ class Level1Scene extends Phaser.Scene {
     this.shipParts[this.shipPartIndexes.indexOf(index)].setAlpha(1);
   }
 
+  async updateProgress(timeElapsed) {
+    try {
+      const response = await axios.post('http://localhost:5000/api/updateProgress', {
+        level: 1,
+        score: timeElapsed
+      }, { withCredentials: true });
+      console.log("Progress updated successfully:", response.data);
+    } catch (error) {
+      console.error("Error updating progress:", error);
+    }
+  }
+
   assembleShip() {
     this.showCaption("🚀 You've found all the ship parts!\nNow the ship will be revealed!");
 
@@ -199,6 +245,8 @@ class Level1Scene extends Phaser.Scene {
           duration: 600,
           ease: 'Cubic.easeOut',
           onComplete: () => {
+            this.endTimer();
+            this.updateProgress(this.timeElapsed);
             this.scene.start('Level2Scene');
           }
         });
