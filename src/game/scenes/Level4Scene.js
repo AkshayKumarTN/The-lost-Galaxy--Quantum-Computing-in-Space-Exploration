@@ -23,7 +23,10 @@ class Level4Scene extends Phaser.Scene {
         this.isAlarmActive = false; // To track if the alarm is playing
     }
 
+
     preload() {
+        this.load.image('nebulaBackground', 'assets/images/nebula_space.jpg');
+
         for (let i = 1; i <= 10; i++) {
             this.load.image(`room${i}-original`, `assets/original/${i}.jpg`);
             this.load.image(`room${i}-processed`, `assets/processed/${i}p.png`);
@@ -41,10 +44,56 @@ class Level4Scene extends Phaser.Scene {
     }
 
     create() {
+        const { width, height } = this.scale;
+
+        const background = this.add.image(width / 2, height / 2, 'nebulaBackground').setOrigin(0.5);
+        const scaleX = width / background.width;
+        const scaleY = height / background.height;
+        background.setScale(Math.min(scaleX, scaleY));
+
+        this.cameras.main.setZoom(1);
+        this.cameras.main.setBounds(0, 0, width * 2, height * 2);
+        this.cameras.main.scrollX = width / 2;
+        this.cameras.main.scrollY = height / 2;
+
+        // Drag camera
+        this.input.on('pointerdown', (pointer) => {
+            this.startDrag(pointer);
+        });
+
         this.setupGame();
         this.sound.add('space_sound').play({ loop: true }); // Loop space sound
         this.alarmSound = this.sound.add('alarm'); // Initialize the alarm sound
     }
+
+    
+  startDrag(pointer) {
+    this.startX = pointer.x;
+    this.startY = pointer.y;
+
+    if (!this.dragListener) {
+      this.dragListener = (pointer) => {
+        if (pointer.isDown) {
+          const deltaX = pointer.x - this.startX;
+          const deltaY = pointer.y - this.startY;
+
+          this.cameras.main.scrollX -= deltaX;
+          this.cameras.main.scrollY -= deltaY;
+
+          this.startX = pointer.x;
+          this.startY = pointer.y;
+        }
+      };
+      this.input.on('pointermove', this.dragListener);
+    }
+
+    this.input.once('pointerup', () => {
+      if (this.dragListener) {
+        this.input.off('pointermove', this.dragListener);
+        this.dragListener = null;
+      }
+    });
+  }
 
     setupGame() {
         this.background = this.add.image(0, 0, 'star_bg1')
@@ -88,7 +137,7 @@ class Level4Scene extends Phaser.Scene {
         this.addRedKeysToRoom();
 
         this.cameras.main.setBounds(0, 0, roomWidth * 2, roomHeight)
-                         .centerOn(roomWidth, roomHeight / 2);
+            .centerOn(roomWidth, roomHeight / 2);
     }
 
     addKeyToRoom() {
@@ -225,15 +274,15 @@ class Level4Scene extends Phaser.Scene {
             this.scale.width - 60, this.scale.height / 2,
             arrowSize, arrowSize, 0x00ff00, 0.5
         ).setInteractive()
-         .setScrollFactor(0)
-         .on('pointerdown', () => this.changeRoom(1));
+            .setScrollFactor(0)
+            .on('pointerdown', () => this.changeRoom(1));
 
         this.leftArrow = this.add.rectangle(
             60, this.scale.height / 2,
             arrowSize, arrowSize, 0xff0000, 0.5
         ).setInteractive()
-         .setScrollFactor(0)
-         .on('pointerdown', () => this.changeRoom(-1));
+            .setScrollFactor(0)
+            .on('pointerdown', () => this.changeRoom(-1));
 
         this.roomText = this.add.text(
             this.scale.width / 2, 30,
