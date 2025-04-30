@@ -3,13 +3,14 @@ import Phaser from 'phaser';
 import MainScene from '../game/scenes/MainScene';
 import Level1Scene from '../game/scenes/Level1Scene';
 import Level2Scene from '../game/scenes/Level2Scene';
+import Level3Scene from '../game/scenes/Level3Scene';
 
 const config = {
   type: Phaser.AUTO,
   width: window.innerWidth, 
   height: window.innerHeight,
   parent: 'game-container',
-  scene: [MainScene, Level1Scene, Level2Scene], 
+  scene: [MainScene, Level1Scene, Level2Scene, Level3Scene],  // Include all scenes
   physics: {
     default: 'arcade',
     arcade: { gravity: { y: 0 } }
