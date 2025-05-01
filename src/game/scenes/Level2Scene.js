@@ -121,13 +121,16 @@ class Level2Scene extends Phaser.Scene {
           }
         }
       });
+      if (text == '[Lost Ship] : Alright, select a filter.') {
+        this.rectButton.setInteractive();
+        this.diagButton.setInteractive();
+      }
     };
 
     this.clearDialogue = () => {
       this.dialogText.setText('');
     };
 
-    this.showFullConversation();
 
     this.add.text(this.cameras.main.width / 2, 50, 'Level 2: Quantum Key Distribution', {
       fontSize: '32px',
@@ -171,6 +174,8 @@ class Level2Scene extends Phaser.Scene {
 
     this.createFilterButtons();
     this.createHistoryLists();
+    this.showFullConversation();
+
   }
 
   showFullConversation() {
@@ -178,6 +183,10 @@ class Level2Scene extends Phaser.Scene {
     const messageDisplayTime = 5000;
 
     for (let i = 0; i < this.dialogueSequence.length; i++) {
+      if (i == 0) {
+        this.rectButton.disableInteractive();
+        this.diagButton.disableInteractive();
+      }
       const dialogue = this.dialogueSequence[i];
 
       this.time.delayedCall(delay, () => {
@@ -538,13 +547,6 @@ class Level2Scene extends Phaser.Scene {
     this.createNextLevelButton();
 
     this.storeSecretKeyInDatabase(this.secretKey);
-
-    // 在Level2Scene的finalizeKey()方法末尾添加：
-    this.time.delayedCall(2000, () => {
-    this.add.text(400, 400, 'Click to proceed to Level 5', { fontSize: '24px', fill: '#0f0' })
-    .setInteractive()
-    .on('pointerdown', () => this.scene.start('Level5Scene'));
-    });
   }
 
   storeSecretKeyInDatabase(secretKey) {
@@ -599,11 +601,11 @@ class Level2Scene extends Phaser.Scene {
     });
 
     nextLevelBackground.on('pointerdown', () => {
-      this.scene.start('Level4Scene'); // Load the next level
+      this.scene.start('Level3Scene'); // Load the next level
     });
 
     nextLevelButton.on('pointerdown', () => {
-      this.scene.start('Level4Scene');
+      this.scene.start('Level3Scene');
     });
 
     nextLevelButton.on('pointerover', () => {
@@ -617,15 +619,15 @@ class Level2Scene extends Phaser.Scene {
   createBackButton() {
     const centerX = this.cameras.main.width / 2;
     const backButtonY = this.cameras.main.height - 50;
-  
+
     const buttonWidth = 250;
     const buttonHeight = 50;
-  
+
     // Create background rectangle
     const backButtonBackground = this.add.rectangle(centerX, backButtonY, buttonWidth, buttonHeight, 0x0C8CFE)
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true }); // Cursor pointer
-  
+
     // Create button text
     const backButton = this.add.text(centerX, backButtonY, 'Back to Level 1', {
       fontSize: '22px',
@@ -635,34 +637,34 @@ class Level2Scene extends Phaser.Scene {
     })
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true });
-  
+
     // Hover and click effects
     backButtonBackground.on('pointerover', () => {
       backButtonBackground.setFillStyle(0x47A8FF); // Light blue on hover
     });
-  
+
     backButtonBackground.on('pointerout', () => {
       backButtonBackground.setFillStyle(0x0C8CFE); // Strong blue normal
     });
-  
+
     backButtonBackground.on('pointerdown', () => {
       this.scene.start('Level1Scene');
     });
-  
+
     backButton.on('pointerover', () => {
       backButtonBackground.setFillStyle(0x47A8FF);
     });
-  
+
     backButton.on('pointerout', () => {
       backButtonBackground.setFillStyle(0x0C8CFE);
     });
-  
+
     backButton.on('pointerdown', () => {
       this.scene.start('Level1Scene');
     });
   }
-  
-  
+
+
 
   // createNextLevelButton() {
   //   const centerX = this.cameras.main.width / 2;
