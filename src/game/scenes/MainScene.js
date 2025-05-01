@@ -14,7 +14,7 @@ class MainScene extends Phaser.Scene {
   create() {
 
     let music = this.sound.add('background', { loop: true, volume: 0.5 });
-    music.play();
+    // music.play();
     const { width, height } = this.scale;
 
 
@@ -97,7 +97,7 @@ class MainScene extends Phaser.Scene {
         dialogueText.setText(dialogue[dialogueIndex]);
       } else {
         this.input.off('pointerdown', nextDialogue); // Remove event listener
-        this.scene.start('Level5Scene'); // Go to Level 1
+        this.scene.start('Level1Scene'); // Go to Level 1
       }
     };
 

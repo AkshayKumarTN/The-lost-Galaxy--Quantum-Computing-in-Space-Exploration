@@ -21,6 +21,8 @@ class Level4Scene extends Phaser.Scene {
         ];
         this.alarmSound = null; // To hold the alarm sound instance
         this.isAlarmActive = false; // To track if the alarm is playing
+        this.bckgSound = null;
+
     }
 
 
@@ -62,38 +64,39 @@ class Level4Scene extends Phaser.Scene {
         });
 
         this.setupGame();
-        this.sound.add('space_sound').play({ loop: true }); // Loop space sound
-        this.alarmSound = this.sound.add('alarm'); // Initialize the alarm sound
+        this.bckgSound = this.sound.add('space_sound') // Loop space sound
+        this.alarmSound = this.sound.add('alarm'); // Initialize the alarm sound4
+        this.bckgSound.play({ loop: true });
     }
 
-    
-  startDrag(pointer) {
-    this.startX = pointer.x;
-    this.startY = pointer.y;
 
-    if (!this.dragListener) {
-      this.dragListener = (pointer) => {
-        if (pointer.isDown) {
-          const deltaX = pointer.x - this.startX;
-          const deltaY = pointer.y - this.startY;
+    startDrag(pointer) {
+        this.startX = pointer.x;
+        this.startY = pointer.y;
 
-          this.cameras.main.scrollX -= deltaX;
-          this.cameras.main.scrollY -= deltaY;
+        if (!this.dragListener) {
+            this.dragListener = (pointer) => {
+                if (pointer.isDown) {
+                    const deltaX = pointer.x - this.startX;
+                    const deltaY = pointer.y - this.startY;
 
-          this.startX = pointer.x;
-          this.startY = pointer.y;
+                    this.cameras.main.scrollX -= deltaX;
+                    this.cameras.main.scrollY -= deltaY;
+
+                    this.startX = pointer.x;
+                    this.startY = pointer.y;
+                }
+            };
+            this.input.on('pointermove', this.dragListener);
         }
-      };
-      this.input.on('pointermove', this.dragListener);
-    }
 
-    this.input.once('pointerup', () => {
-      if (this.dragListener) {
-        this.input.off('pointermove', this.dragListener);
-        this.dragListener = null;
-      }
-    });
-  }
+        this.input.once('pointerup', () => {
+            if (this.dragListener) {
+                this.input.off('pointermove', this.dragListener);
+                this.dragListener = null;
+            }
+        });
+    }
 
     setupGame() {
         this.background = this.add.image(0, 0, 'star_bg1')
@@ -244,6 +247,8 @@ class Level4Scene extends Phaser.Scene {
         if (this.keysCollected === this.totalKeys) {
             this.playGrantedSound(); // Play granted sound once all keys are found
             this.showAllKeysFoundMessage();
+            this.createNextLevel5Button();
+
         }
     }
 
@@ -251,7 +256,60 @@ class Level4Scene extends Phaser.Scene {
         this.sound.add('granted').play(); // Play the "granted" sound
     }
 
+
+    createNextLevel5Button() {
+        const centerX = this.cameras.main.width / 2;
+        const backButtonY = this.cameras.main.height - 50; // Y position of the Back button
+
+        // Create a background rectangle for solid button feel
+        const buttonWidth = 200;
+        const buttonHeight = 50;
+        const buttonY = backButtonY - 100;
+
+        // Green background rectangle
+        const nextLevelBackground = this.add.rectangle(centerX, buttonY + buttonHeight / 2, buttonWidth, buttonHeight, 0x00aa00)
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true });
+
+        // Text on top of the rectangle
+        const nextLevelButton = this.add.text(centerX, buttonY + buttonHeight / 2, 'Next Level', {
+            fontSize: '20px',
+            color: '#ffffff', // White text
+            fontFamily: 'Arial',
+            fontStyle: 'bold'
+        })
+            .setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+        // Group them together for interaction
+        nextLevelBackground.on('pointerover', () => {
+            nextLevelBackground.setFillStyle(0x00ff00); // Lighter green on hover
+        });
+
+        nextLevelBackground.on('pointerout', () => {
+            nextLevelBackground.setFillStyle(0x00aa00); // Original green
+        });
+
+        nextLevelBackground.on('pointerdown', () => {
+            this.bckgSound.pause();
+            this.scene.start('Level5Scene'); // Load the next level
+        });
+
+        nextLevelButton.on('pointerdown', () => {
+            this.bckgSound.pause();
+            this.scene.start('Level5Scene');
+        });
+
+        nextLevelButton.on('pointerover', () => {
+            nextLevelBackground.setFillStyle(0x00ff00);
+        });
+
+        nextLevelButton.on('pointerout', () => {
+            nextLevelBackground.setFillStyle(0x00aa00);
+        });
+    }
+
     showAllKeysFoundMessage() {
+
         const message = this.add.text(
             this.scale.width / 2, this.scale.height / 2,
             'All keys were found!',
@@ -265,7 +323,9 @@ class Level4Scene extends Phaser.Scene {
             delay: 1000,
             onComplete: () => message.destroy()
         });
+
     }
+
 
     createUI() {
         const arrowSize = 80;

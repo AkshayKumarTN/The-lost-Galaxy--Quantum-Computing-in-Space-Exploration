@@ -16,3 +16,4 @@ const getCollectionFn = (collection) => {
 };
 
 export const users = getCollectionFn('users');
+export const storeUserProgress = getCollectionFn('storeUserProgress');
