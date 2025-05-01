@@ -111,7 +111,7 @@ class MainScene extends Phaser.Scene {
         currentAudio.play();
       } else {
         this.input.off('pointerdown', nextDialogue); // Remove event listener
-        this.scene.start('Level5Scene'); // Go to Level 1
+        this.scene.start('Level1Scene'); // Go to Level 1
       }
     };
 

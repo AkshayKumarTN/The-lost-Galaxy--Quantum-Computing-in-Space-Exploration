@@ -168,14 +168,14 @@ class Level5Scene extends Phaser.Scene {
       this.doorOpening = true;
       this.feedbackText.setText('QUANTUM MATCH! DOOR UNLOCKING...').setColor('#00ff00');
 
-      this.lightBeam.setAlpha(0.8);
-      this.tweens.add({
-        targets: this.lightBeam,
-        alpha: 0.3,
-        yoyo: true,
-        duration: 300,
-        repeat: 3
-      });
+      // this.lightBeam.setAlpha(0.8);
+      // this.tweens.add({
+      //   targets: this.lightBeam,
+      //   alpha: 0.3,
+      //   yoyo: true,
+      //   duration: 300,
+      //   repeat: 3
+      // });
 
       this.tweens.add({
         targets: this.door,

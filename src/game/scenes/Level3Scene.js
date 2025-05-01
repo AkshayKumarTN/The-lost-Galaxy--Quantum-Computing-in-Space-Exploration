@@ -80,7 +80,7 @@ export default class Level3Scene extends Phaser.Scene {
   }
 
   retrieveSecretKeyFromDatabase() {
-    const apiUrl = 'http://localhost:3000/api/Level3Scene';
+    const apiUrl = 'http://localhost:5000/api/Level3Scene';
 
     fetch(apiUrl, {
       method: 'GET',

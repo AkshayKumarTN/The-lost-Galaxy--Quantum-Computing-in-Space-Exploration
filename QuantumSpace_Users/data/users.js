@@ -5,7 +5,7 @@ import { ObjectId } from "mongodb";
 import bcrypt from "bcryptjs";
 import cors from 'cors';
 import session from 'express-session';
-import { users } from '../config/mongoCollections.js';
+import { users, storeUserProgress } from '../config/mongoCollections.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,7 +47,7 @@ app.post('/api/signup', async (req, res) => {
       return res.status(400).json({ message: 'Email already in use.' });
     }
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const newUser = { email, password: hashedPassword};
+    const newUser = { email, password: hashedPassword };
     const result = await userCollection.insertOne(newUser);
     res.status(201).json({ message: 'User created successfully', userId: result.insertedId });
   } catch (error) {
@@ -160,6 +160,56 @@ app.get('/api/currentUser', (req, res) => {
 // app.get('*', (req, res) => {
 //   res.sendFile(path.join(__dirname, 'build', 'Home.js'));
 // });
+
+app.post('/api/storeProgress', async (req, res) => {
+  const { level, secretKey } = req.body;
+
+  if (!level || !secretKey) {
+    return res.status(400).json({ message: 'Both level and secretKey are required.' });
+  }
+
+  try {
+    const storeUserProgressCollection = await storeUserProgress();
+    const existingProgress = await storeUserProgressCollection.findOne({ level });
+
+    if (existingProgress) {
+      await storeUserProgressCollection.updateOne(
+        { level },
+        { $set: { secretKey, timestamp: new Date() } }
+      );
+    } else {
+      await storeUserProgressCollection.insertOne({ level, secretKey, timestamp: new Date() });
+    }
+    const storedProgress = await storeUserProgressCollection.findOne({ level });
+    console.log("Stored Progress:", storedProgress);
+    return res.json({ message: 'Progress saved successfully!', storedProgress });
+
+  } catch (error) {
+    console.error("Error updating progress:", error);
+    res.status(500).json({ message: "Failed to update progress." });
+  }
+
+});
+
+app.get('/api/Level3Scene', async (req, res) => {
+  try {
+    const storeUserProgressCollection = await storeUserProgress();
+    // Fix: use number not string
+    const progress = await storeUserProgressCollection.findOne({ level: 2 });
+
+    if (progress && progress.secretKey) {
+      return res.json({ secretKey: progress.secretKey });
+    } else {
+      return res.status(404).json({ message: 'Secret key not found for Level3.' });
+    }
+
+  } catch (err) {
+    console.error('Error retrieving secret key:', err);
+    res.status(500).json({ message: 'Error retrieving secret key', error: err });
+
+  }
+});
+
 
 // Server start
 const PORT = process.env.PORT || 5000;

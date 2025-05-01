@@ -22,7 +22,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "server": "sleep 5 && node QuantumSpace_Users/data/users.js",
+    "server": "powershell -Command \"Start-Sleep -Seconds 5; node QuantumSpace_Users/data/users.js\"",
     "start": "concurrently \"react-scripts start\" \"npm run server\"",
     "build": "react-scripts build",
     "test": "react-scripts test",

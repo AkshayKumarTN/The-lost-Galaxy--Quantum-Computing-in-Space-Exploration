@@ -548,7 +548,7 @@ class Level2Scene extends Phaser.Scene {
   }
 
   storeSecretKeyInDatabase(secretKey) {
-    const apiUrl = 'http://localhost:3000/api/storeProgress';
+    const apiUrl = 'http://localhost:5000/api/storeProgress';
 
     fetch(apiUrl, {
       method: 'POST',
