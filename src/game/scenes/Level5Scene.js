@@ -32,6 +32,7 @@ class Level5Scene extends Phaser.Scene {
     this.load.image('polarizer', 'assets/images/polarizer.png');
     this.load.image('labBg', 'assets/images/quantum_lab.png');
     this.load.image('lightBeam', 'assets/images/light_beam.png');
+    this.load.audio('Level5A', 'assets/sounds/Level5A.mp3');
   }
 
   create() {
@@ -185,6 +186,8 @@ class Level5Scene extends Phaser.Scene {
         ease: 'Power2',
         onComplete: () => {
           this.feedbackText.setText('ACCESS GRANTED');
+          let music = this.sound.add('Level5A', { volume: 1.5 });
+          music.play();
         }
       });
     } else {
