@@ -14,7 +14,7 @@ class MainScene extends Phaser.Scene {
   create() {
 
     let music = this.sound.add('background', { loop: true, volume: 0.5 });
-    // music.play();
+    music.play();
     const { width, height } = this.scale;
 
 
