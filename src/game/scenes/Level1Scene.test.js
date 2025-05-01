@@ -66,7 +66,11 @@ describe('Level1Scene', () => {
 
     scene = new Level1Scene();
 
-    // 🛠️ Assign BEFORE create()
+    scene.sound = {
+      add: jest.fn(() => ({
+        play: jest.fn()
+      }))
+    };
     scene.add = mockAdd;
     scene.time = mockTime;
     scene.input = { on: jest.fn() };
