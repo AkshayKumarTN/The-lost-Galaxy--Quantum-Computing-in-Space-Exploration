@@ -9,11 +9,16 @@ class MainScene extends Phaser.Scene {
     this.load.image('startScreen', 'assets/images/start-screen.png');
     this.load.image('astronaut', 'assets/images/astronaut.png');
     this.load.audio('background', 'assets/sounds/space-station-247790.mp3');
+    this.load.audio("dialogue1", 'assets/sounds/ElevenLabs_Text_to_Speech_audio.mp3')
+    this.load.audio("dialogue2", 'assets/sounds/ElevenLabs_Text_to_Speech_audio (1).mp3')
+    this.load.audio("dialogue3", 'assets/sounds/ElevenLabs_Text_to_Speech_audio (2).mp3')
+    this.load.audio("dialogue4", 'assets/sounds/ElevenLabs_Text_to_Speech_audio (3).mp3')
+    this.load.audio("dialogue5", 'assets/sounds/ElevenLabs_Text_to_Speech_audio (4).mp3')
   }
 
   create() {
 
-    let music = this.sound.add('background', { loop: true, volume: 0.5 });
+    let music = this.sound.add('background', { loop: true, volume: 0.25 });
     music.play();
     const { width, height } = this.scale;
 
@@ -80,8 +85,11 @@ class MainScene extends Phaser.Scene {
       "Be careful—choosing the wrong position could trigger a paradox!",
       "Let's begin our mission!"
     ];
+    const audioKeys = ["dialogue1", "dialogue2", "dialogue3", "dialogue4", "dialogue5"];
 
     let dialogueIndex = 0;
+  
+
     const dialogueText = this.add.text(width / 2, height * 0.8, dialogue[dialogueIndex], {
       fontSize: '28px',
       fill: '#ffffff',
@@ -91,10 +99,16 @@ class MainScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
 
+    let currentAudio = this.sound.add(audioKeys[dialogueIndex], { volume: 1.5 });
+    currentAudio.play();
+
+    
     const nextDialogue = () => {
       dialogueIndex++;
       if (dialogueIndex < dialogue.length) {
         dialogueText.setText(dialogue[dialogueIndex]);
+        currentAudio = this.sound.add(audioKeys[dialogueIndex], { volume: 1.5 });
+        currentAudio.play();
       } else {
         this.input.off('pointerdown', nextDialogue); // Remove event listener
         this.scene.start('Level1Scene'); // Go to Level 1

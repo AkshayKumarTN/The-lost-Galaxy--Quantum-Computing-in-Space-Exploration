@@ -8,7 +8,7 @@ const LoginIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [setUser] = useState(null);
+  const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
 
@@ -36,7 +36,6 @@ const LoginIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const response = await axios.post('http://localhost:5000/api/signin', {
         email,
@@ -45,7 +44,7 @@ const LoginIn = () => {
 
       setUser(response.data.user);
       setError('');
-      console.log('Logged in:', response.data.user.email);
+      console.log('Logged in:', response.data.user.email, user);
       navigate('/');
   }catch (err) {
     if (err.response && err.response.data) {
