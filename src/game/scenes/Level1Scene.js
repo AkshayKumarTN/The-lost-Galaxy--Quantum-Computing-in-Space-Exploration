@@ -21,11 +21,12 @@ class Level1Scene extends Phaser.Scene {
     this.timeElapsed = 0;
     this.timerEvent = null;
   }
-
+  // https://elevenlabs.io/ AI voice generator used
   preload() {
     this.load.image('planet', 'assets/images/planet.png');
     this.load.image('ship', 'assets/images/lostShip.png');
     this.load.image('shipPart', 'assets/images/ghost.png'); 
+    this.load.audio('level1back', 'assets/sounds/Level1.mp3');
   }
 
   create() {
@@ -35,6 +36,8 @@ class Level1Scene extends Phaser.Scene {
     this.createClickableSpots();
     this.setRandomShipParts();
     this.registerInput();
+    let music = this.sound.add('level1back', { volume: 1.5 });
+    music.play();
 
     this.timerText = this.add.text(10, 10, `Time: 0s`, {
       fontSize: '24px',
