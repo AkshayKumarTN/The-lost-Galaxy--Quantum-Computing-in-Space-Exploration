@@ -538,6 +538,13 @@ class Level2Scene extends Phaser.Scene {
     this.createNextLevelButton();
 
     this.storeSecretKeyInDatabase(this.secretKey);
+
+    // 在Level2Scene的finalizeKey()方法末尾添加：
+    this.time.delayedCall(2000, () => {
+    this.add.text(400, 400, 'Click to proceed to Level 5', { fontSize: '24px', fill: '#0f0' })
+    .setInteractive()
+    .on('pointerdown', () => this.scene.start('Level5Scene'));
+    });
   }
 
   storeSecretKeyInDatabase(secretKey) {

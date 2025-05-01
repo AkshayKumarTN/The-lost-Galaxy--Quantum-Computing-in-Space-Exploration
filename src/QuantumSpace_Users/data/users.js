@@ -1,8 +1,8 @@
 import express from 'express';
-import { ObjectId } from "mongodb";
-import bcrypt from "bcryptjs";
+import { ObjectId } from 'mongodb';
+import bcrypt from 'bcryptjs';
 import cors from 'cors';
-import { users} from '../config/mongoCollections.js'; // Import existing collections
+import { users } from '../config/mongoCollections.js';
 import { MongoClient } from 'mongodb';
 
 const uri = "mongodb://localhost:27017/";
@@ -15,7 +15,7 @@ const saltRounds = 10;
 app.use(cors());
 app.use(express.json());
 
-// Signup API
+// SIGNUP API
 app.post('/api/signup', async (req, res) => {
   const { email, password } = req.body;
 
@@ -42,7 +42,7 @@ app.post('/api/signup', async (req, res) => {
   }
 });
 
-// Update Password Function
+// UPDATE PASSWORD FUNCTION
 const updatePassword = async (id, newPassword) => {
   if (!id || typeof id !== 'string' || id.trim().length === 0) {
     throw 'Invalid ID';
@@ -68,9 +68,9 @@ const updatePassword = async (id, newPassword) => {
   return updatedInfo;
 };
 
-//Store Progress API
+// STORE PROGRESS API
 app.post('/api/storeProgress', async (req, res) => {
-  const { level, secretKey } = req.body;  // Expecting both level and secretKey
+  const { level, secretKey } = req.body;
 
   if (!level || !secretKey) {
     return res.status(400).json({ message: 'Both level and secretKey are required.' });
@@ -80,7 +80,7 @@ app.post('/api/storeProgress', async (req, res) => {
 
   try {
     await client.connect();
-    console.log('Connected to MongoDB');
+    console.log('Connected to MongoDB for storing progress');
 
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
@@ -88,26 +88,17 @@ app.post('/api/storeProgress', async (req, res) => {
     const existingProgress = await collection.findOne({ level });
 
     if (existingProgress) {
-      // If progress exists, update the secretKey
       await collection.updateOne(
         { level },
         { $set: { secretKey, timestamp: new Date() } }
       );
-
-      const storedProgress = await collection.findOne({ level });
-      console.log("After Update - Stored Progress:", storedProgress); // Debugging
-
-      return res.json({ message: 'Progress updated successfully!', storedProgress });
     } else {
-      // If no progress exists, create a new document with the secretKey
-      const newDocument = { level, secretKey, timestamp: new Date() };
-      const result = await collection.insertOne(newDocument);
-
-      const storedProgress = await collection.findOne({ level });
-      console.log("After Insert - Stored Progress:", storedProgress); // Debugging
-
-      return res.json({ message: 'Progress initialized with secretKey!', storedProgress });
+      await collection.insertOne({ level, secretKey, timestamp: new Date() });
     }
+
+    const storedProgress = await collection.findOne({ level });
+    console.log("Stored Progress:", storedProgress);
+    return res.json({ message: 'Progress saved successfully!', storedProgress });
 
   } catch (err) {
     console.error('Error updating progress:', err);
@@ -118,6 +109,34 @@ app.post('/api/storeProgress', async (req, res) => {
   }
 });
 
+// Get Secret Key for Level3
+app.get('/api/Level3Scene', async (req, res) => {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    // Fix: use number not string
+    const progress = await collection.findOne({ level: 2 });
+
+    if (progress && progress.secretKey) {
+      return res.json({ secretKey: progress.secretKey });
+    } else {
+      return res.status(404).json({ message: 'Secret key not found for Level3.' });
+    }
+
+  } catch (err) {
+    console.error('Error retrieving secret key:', err);
+    res.status(500).json({ message: 'Error retrieving secret key', error: err });
+
+  } finally {
+    await client.close();
+  }
+});
+
+// START SERVER
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
