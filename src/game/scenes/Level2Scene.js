@@ -592,11 +592,11 @@ class Level2Scene extends Phaser.Scene {
     });
 
     nextLevelBackground.on('pointerdown', () => {
-      this.scene.start('Level3Scene'); // Load the next level
+      this.scene.start('Level4Scene'); // Load the next level
     });
 
     nextLevelButton.on('pointerdown', () => {
-      this.scene.start('Level3Scene');
+      this.scene.start('Level4Scene');
     });
 
     nextLevelButton.on('pointerover', () => {
