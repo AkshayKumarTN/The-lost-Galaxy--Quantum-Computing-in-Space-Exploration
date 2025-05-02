@@ -121,7 +121,7 @@ class Level2Scene extends Phaser.Scene {
           }
         }
       });
-      if (text == '[Lost Ship] : Alright, select a filter.') {
+      if (text === '[Lost Ship] : Alright, select a filter.') {
         this.rectButton.setInteractive();
         this.diagButton.setInteractive();
       }
@@ -183,7 +183,7 @@ class Level2Scene extends Phaser.Scene {
     const messageDisplayTime = 5000;
 
     for (let i = 0; i < this.dialogueSequence.length; i++) {
-      if (i == 0) {
+      if (i === 0) {
         this.rectButton.disableInteractive();
         this.diagButton.disableInteractive();
       }
